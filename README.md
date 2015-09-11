@@ -5,9 +5,6 @@ Bringing modern Microsoft development practices to Unity3d. If you are a Xamarin
 
 If you like this toolkit and want to see a high quality example of the outcome, please support my development by purchasing my premium asset on the asset store. It not only includes a slick, animated UI, but, a complete WebApi back end for support player data.
 
-**[Unity3d Foundation Premium](http://unity3dfoundation.com)**
-
-**[For more, please visit the wiki](https://github.com/NVentimiglia/Unity3d-Foundation/wiki)**
 
 ## Features
 
@@ -16,7 +13,7 @@ If you like this toolkit and want to see a high quality example of the outcome, 
 - Mvvm (model-view-viewmodel) supports standard INotifyPropertyChange.
 - UnityTasks supports running in the background or as coroutines
 - Localization supports CSV format and dynamic  translation
-- WebApi supports ModelState errors and token based authentication
+- **[Unity3d Foundation Premium](http://unity3dfoundation.com)**
 
 ## Platforms
 Desktop, Webplayer, Android, iOS, Windows Store
@@ -33,3 +30,5 @@ Desktop, Webplayer, Android, iOS, Windows Store
 
 
 ### NOTE, Pending. Will be publishing shortly.
+
+### For more, please visit the wiki

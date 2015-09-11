@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/
+VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>uinst</Title>
+      <Shortcut>uinst</Shortcut>
+      <Description>Unity Static Instance</Description>
+      <Author>Nicholas Ventimiglia</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>type</ID>
+          <ToolTip>Property type</ToolTip>
+          <Default>ServiceType</Default>
+        </Literal>      
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+	private static $type$ _instance;
+	public static $type$ Instance
+	{
+		get { return _instance ?? (_instance = new $type$()); }
+	}
+      $end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

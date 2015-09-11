@@ -23,8 +23,13 @@ Desktop, Webplayer, Android, iOS, Windows Store
 ## Dependencies
 [FullSerializer](https://github.com/jacobdufault/fullserializer) Json Library
 
-For more, please visit the wiki
+## License
+[MIT License](https://github.com/NVentimiglia/Unity3d-Foundation/blob/master/README.md)
 
+## Donations
+[I accept donations via papal. Your money is an objective measure of my self esteem.](https://www.paypal.com/us/cgi-bin/webscr?cmd=_send-money&nav=1&email=nick@simplesys.us)
 
 
 ### NOTE, Pending. Will be publishing shortly.
+
+### For more, please visit the wiki

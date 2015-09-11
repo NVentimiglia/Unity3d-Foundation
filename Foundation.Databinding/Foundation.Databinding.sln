@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Databinding", "Foundation.Databinding.csproj", "{E45BEAE6-33C2-4D8E-A6A7-4ED885CD7F9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Databinding.Windows", "Foundation.Databinding.Windows.csproj", "{27373D38-3041-44CC-A2C6-3F01166CE1BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E45BEAE6-33C2-4D8E-A6A7-4ED885CD7F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E45BEAE6-33C2-4D8E-A6A7-4ED885CD7F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E45BEAE6-33C2-4D8E-A6A7-4ED885CD7F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E45BEAE6-33C2-4D8E-A6A7-4ED885CD7F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27373D38-3041-44CC-A2C6-3F01166CE1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27373D38-3041-44CC-A2C6-3F01166CE1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27373D38-3041-44CC-A2C6-3F01166CE1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27373D38-3041-44CC-A2C6-3F01166CE1BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

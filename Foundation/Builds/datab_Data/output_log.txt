@@ -1,0 +1,44 @@
+Initialize engine version: 5.0.0p3 (8c9c1a5d2db2)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 770 (ID=0x1184)
+    Vendor:   NVIDIA
+    VRAM:     1985 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Foundation.Databinding.Model.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Foundation.Databinding.Model.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Foundation.Tasks.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Foundation.Tasks.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\FullSerializer - Unity.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\FullSerializer - Unity.dll into Unity Child Domain
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.085 seconds
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\System.dll (this message is harmless)
+ExampleMainMenu.Awake
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+ExampleMainMenu.IsVisible False
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Platform assembly: D:\Users\Nicholas\Projects\Avarice\Foundation\Databinding\Foundation Databinding\Builds\datab_Data\Managed\Mono.Security.dll (this message is harmless)
+ExampleMainMenu.IsVisible True
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+

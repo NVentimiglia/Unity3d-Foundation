@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Tasks", "Foundation.Tasks.csproj", "{50714096-6CB2-4920-884D-1669BA8C4557}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Tasks.Windows", "Foundation.Tasks.Windows.csproj", "{B13D90B5-66CC-41DD-86C0-B7A4D388CBBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Tasks.WebGL", "Foundation.Tasks.WebGL.csproj", "{8BC50308-515E-4C03-94FF-AB2976B3EBF6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50714096-6CB2-4920-884D-1669BA8C4557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50714096-6CB2-4920-884D-1669BA8C4557}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50714096-6CB2-4920-884D-1669BA8C4557}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50714096-6CB2-4920-884D-1669BA8C4557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B13D90B5-66CC-41DD-86C0-B7A4D388CBBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B13D90B5-66CC-41DD-86C0-B7A4D388CBBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B13D90B5-66CC-41DD-86C0-B7A4D388CBBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B13D90B5-66CC-41DD-86C0-B7A4D388CBBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC50308-515E-4C03-94FF-AB2976B3EBF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC50308-515E-4C03-94FF-AB2976B3EBF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC50308-515E-4C03-94FF-AB2976B3EBF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC50308-515E-4C03-94FF-AB2976B3EBF6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

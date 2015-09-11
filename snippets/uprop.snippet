@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/
+VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>uprop</Title>
+      <Shortcut>uprop</Shortcut>
+      <Description>Unity Observable Property</Description>
+      <Author>Nicholas Ventimiglia</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>type</ID>
+          <ToolTip>Property type</ToolTip>
+          <Default>int</Default>
+        </Literal>
+        <Literal>
+          <ID>property</ID>
+          <ToolTip>Property name</ToolTip>
+          <Default>MyProperty</Default>
+        </Literal>
+        <Literal>
+          <ID>field</ID>
+          <ToolTip>Private field</ToolTip>
+          <Default>_myProperty</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+
+	[SerializeField]
+	private  $type$ $field$;
+	public  $type$ $property$
+	{
+		get { return $field$; }
+		set
+		{
+            		if ($field$ == value)
+                		return;
+            		$field$ = value;
+			NotifyProperty("$property$", value);
+		}
+	}
+
+      $end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

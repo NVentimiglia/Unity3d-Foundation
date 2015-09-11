@@ -16,6 +16,15 @@ If you like this toolkit and want to see a high quality example of the outcome, 
 - Localization supports CSV format and dynamic  translation
 - WebApi supports ModelState errors and token based authentication
 
+## Platforms
+Desktop, Webplayer, Android, iOS, Windows Store
+
+
+## Dependencies
+[FullSerializer](https://github.com/jacobdufault/fullserializer) Json Library
+
 For more, please visit the wiki
+
+
 
 ### NOTE, Pending. Will be publishing shortly.

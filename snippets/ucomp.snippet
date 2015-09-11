@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/
+VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>uprop</Title>
+      <Shortcut>ucomp</Shortcut>
+      <Description>Unity Component Property</Description>
+      <Author>Nicholas Ventimiglia</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>type</ID>
+          <ToolTip>Property type</ToolTip>
+          <Default>MonoBehaviour</Default>
+        </Literal>
+        <Literal>
+          <ID>property</ID>
+          <ToolTip>Property name</ToolTip>
+          <Default>Name</Default>
+        </Literal>
+        <Literal>
+          <ID>field</ID>
+          <ToolTip>Private field</ToolTip>
+          <Default>_name</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+
+	[SerializeField]
+	private $type$ $field$;
+        public $type$ $property$
+        {
+            get { return $field$ ?? ($field$ = GetComponent<$type$>()); }
+        }
+
+      $end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -7,11 +7,9 @@
 // 
 
 
-#if !NoLocalization
 using System;
 using System.Linq;
-using Foundation.Databinding.Components;
-using Foundation.Localization;
+using Foundation.Databinding;
 using UnityEditor;
 using UnityEngine;
 
@@ -86,4 +84,3 @@ namespace Foundation.Editor
         }
     }
 }
-#endif

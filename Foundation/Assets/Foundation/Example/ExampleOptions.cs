@@ -13,6 +13,21 @@ using UnityEngine.UI;
 
 namespace Foundation.Example
 {
+    public enum ExampleQuality
+    {
+        Normal,
+        Good,
+        Bad,
+        Fast,
+        Faster,
+        Pretty,
+        Nice,
+        Ok,
+        Lovely,
+        Anime,
+        FOUNDATION
+    }
+
     /// <summary>
     ///     Example Options Menu
     /// </summary>
@@ -24,8 +39,8 @@ namespace Foundation.Example
         protected override void Awake()
         {
             base.Awake();
-            Qualities = Enum.GetValues(typeof(QualityLevel)).Cast<QualityLevel>().ToArray();
-            CurrentQuality = QualityLevel.Fast;
+            Qualities = Enum.GetValues(typeof(ExampleQuality)).Cast<ExampleQuality>().ToArray();
+            CurrentQuality = ExampleQuality.Fast;
             
             Load();
         }
@@ -155,8 +170,8 @@ namespace Foundation.Example
 
 
         [SerializeField]
-        private QualityLevel[] _quality;
-        public QualityLevel[] Qualities
+        private ExampleQuality[] _quality;
+        public ExampleQuality[] Qualities
         {
             get { return _quality; }
             set
@@ -169,8 +184,8 @@ namespace Foundation.Example
         }
 
 
-        private QualityLevel _currentQuality;
-        public QualityLevel CurrentQuality
+        private ExampleQuality _currentQuality;
+        public ExampleQuality CurrentQuality
         {
             get { return _currentQuality; }
             set

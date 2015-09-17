@@ -6,12 +6,12 @@
 //  -------------------------------------
 
 using System;
+using System.Linq;
 using Foundation.Databinding;
-using Foundation.Databinding.Components;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     /// <summary>
     ///     Example Options Menu
@@ -24,6 +24,9 @@ namespace Assets.Foundation.Example
         protected override void Awake()
         {
             base.Awake();
+            Qualities = Enum.GetValues(typeof(QualityLevel)).Cast<QualityLevel>().ToArray();
+            CurrentQuality = QualityLevel.Fast;
+            
             Load();
         }
 
@@ -132,6 +135,50 @@ namespace Assets.Foundation.Example
                 NotifyProperty("UserName", value);
 
                 // todo update service
+            }
+        }
+
+
+        private int _qualityIndex;
+        public int QualityIndex
+        {
+            get { return _qualityIndex; }
+            set
+            {
+                if (_qualityIndex == value)
+                    return;
+                _qualityIndex = value;
+                NotifyProperty("QualityIndex", value);
+            }
+        }
+
+
+
+        [SerializeField]
+        private QualityLevel[] _quality;
+        public QualityLevel[] Qualities
+        {
+            get { return _quality; }
+            set
+            {
+                if (_quality == value)
+                    return;
+                _quality = value;
+                NotifyProperty("Qualities", value);
+            }
+        }
+
+
+        private QualityLevel _currentQuality;
+        public QualityLevel CurrentQuality
+        {
+            get { return _currentQuality; }
+            set
+            {
+                if (_currentQuality == value)
+                    return;
+                _currentQuality = value;
+                NotifyProperty("CurrentQuality", value);
             }
         }
 

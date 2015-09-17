@@ -6,7 +6,7 @@
 //  -------------------------------------
 using System;
 
-namespace Foundation.Localization
+namespace Foundation
 {
     /// <summary>
     /// Place this on a class field / property that you wish to localize and call the LocalizationService.LocalizeObject() method.

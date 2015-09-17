@@ -5,10 +5,9 @@
 //  Published		: 2015
 //  -------------------------------------
 
-using Foundation.Localization;
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     /// Sets the "Format String" for a TextBinder

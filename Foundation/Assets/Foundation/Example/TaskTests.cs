@@ -4,7 +4,7 @@ using Foundation.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     /// <summary>
     /// Example of how to use the UnityTask library

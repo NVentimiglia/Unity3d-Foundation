@@ -7,12 +7,15 @@
 
 using UnityEngine;
 
-namespace Foundation.Messenging
+namespace Foundation.Internal
 {
     /// <summary>
-    /// For passing messages to coroutines
+    /// Static helper for passing messages to coroutines
     /// </summary>
-    [AddComponentMenu("Foundation/Messenger/MessengerHandler")]
+    /// <remarks>
+    /// Do not initialize, internal
+    /// </remarks>
+    [AddComponentMenu("Foundation/Internal/MessengerHandler")]
     public class MessengerHandler : MonoBehaviour
     {
         public static MessengerHandler Instance { get; protected set; }

@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Foundation.Localization
+namespace Foundation
 {
     /// <summary>
     /// Language Translation Service.

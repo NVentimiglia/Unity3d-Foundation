@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Bind a buttons 'is pressed' state to a bool property on your model

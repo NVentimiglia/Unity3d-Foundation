@@ -9,7 +9,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Usefull for dynamic text. Sets the LayoutElement height based on the text's height.

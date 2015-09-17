@@ -9,7 +9,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Foundation.Databinding.Editor
+namespace Foundation.Editor
 {
     public class FindMissingScriptsRecursively : EditorWindow
     {

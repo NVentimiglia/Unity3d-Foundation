@@ -7,7 +7,7 @@
 
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Adds a Paramater to the Button Command

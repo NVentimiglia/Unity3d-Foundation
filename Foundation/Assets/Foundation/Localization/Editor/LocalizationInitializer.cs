@@ -5,11 +5,10 @@
 //  Published		: 2015
 //  -------------------------------------
 using System.IO;
-using Foundation.Localization;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Foundation.Localization.Editor
+namespace Foundation.Editor
 {
     [InitializeOnLoad]
     public class LocalizationInitializer

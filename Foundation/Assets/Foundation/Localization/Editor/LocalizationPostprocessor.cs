@@ -4,7 +4,9 @@
 //  Product		: Unity3d Foundation
 //  Published		: 2015
 //  -------------------------------------
-using Foundation.Localization;
+
+using Foundation;
+using Foundation.Editor;
 using UnityEditor;
 
 namespace Assets.Foundation.Localization.Editor

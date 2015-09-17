@@ -8,7 +8,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Utility for playing audio clips from the AudioListener (great for UI sounds or music)
@@ -16,7 +16,7 @@ namespace Foundation.Databinding.Components
     /// <remarks>
     ///     Attach onto all AudioListeners
     /// </remarks>
-    [AddComponentMenu("Foundation/Databinding/Audio2dListener")]
+    [AddComponentMenu("Foundation/Audio/Audio2dListener")]
     [RequireComponent(typeof (AudioListener))]
     public class Audio2DListener : MonoBehaviour
     {

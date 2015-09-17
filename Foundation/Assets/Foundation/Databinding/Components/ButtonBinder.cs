@@ -8,7 +8,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Button Click to Command. Invoke a method or run a coroutine !

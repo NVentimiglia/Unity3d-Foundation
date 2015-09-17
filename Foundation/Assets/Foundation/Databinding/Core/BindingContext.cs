@@ -17,7 +17,7 @@ using Windows.ApplicationModel;
 using Windows.Storage;
 #endif
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Mediates between the model and the data-binders. Place this on the root of your visual tree.

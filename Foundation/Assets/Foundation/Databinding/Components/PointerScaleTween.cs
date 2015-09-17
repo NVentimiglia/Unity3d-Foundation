@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Scale an element via IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, or IPointerUpHandler

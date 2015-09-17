@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Audio layers used by the Audio Helper

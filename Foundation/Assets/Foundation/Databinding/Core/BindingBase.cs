@@ -13,7 +13,7 @@ using UnityEngine;
 using System.Reflection;
 #endif
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Base DataBinder. Used by presentation layer.

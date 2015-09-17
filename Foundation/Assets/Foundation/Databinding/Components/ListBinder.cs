@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Presents an array, observable collection or other IEnumerable visually.

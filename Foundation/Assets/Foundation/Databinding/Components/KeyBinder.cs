@@ -7,7 +7,7 @@
 
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Desktopkeyboard input to command

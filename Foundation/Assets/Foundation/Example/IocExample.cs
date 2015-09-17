@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Foundation.Ioc;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     [AddComponentMenu("Foundation/Examples/IocExample")]
     public class IocExample : MonoBehaviour

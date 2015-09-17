@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     public static class BindingExtensions
     {

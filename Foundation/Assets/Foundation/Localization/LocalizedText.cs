@@ -9,7 +9,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Foundation.Localization
+namespace Foundation
 {
     /// <summary>
     /// Static Localized Text

@@ -8,7 +8,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     UIToggle to bool or string. Use 'StaticValue' to pass an arbitrary string value if true.

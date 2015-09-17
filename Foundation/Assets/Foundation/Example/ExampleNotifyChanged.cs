@@ -8,7 +8,7 @@
 using System.ComponentModel;
 using UnityEngine;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     /// <summary>
     ///     Example main menu

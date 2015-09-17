@@ -6,7 +6,7 @@
 //  -------------------------------------
 using System;
 
-namespace Foundation.Ioc
+namespace Foundation
 {
     /// <summary>
     /// Decorate a instance with this to define the export.

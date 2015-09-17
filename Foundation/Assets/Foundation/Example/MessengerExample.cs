@@ -1,9 +1,8 @@
 using System;
-using Foundation.Messenging;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     [AddComponentMenu("Foundation/Examples/MessengerExample")]
     public class MessengerExample : MonoBehaviour

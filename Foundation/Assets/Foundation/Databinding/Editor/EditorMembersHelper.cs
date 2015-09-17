@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Foundation.Databinding;
 using UnityEngine;
 
-namespace Foundation.Databinding.Editor
+namespace Foundation.Editor
 {
     public static class EditorMembersHelper
     {

@@ -15,7 +15,7 @@ using Windows.Storage;
 using System.Threading.Tasks;
 #endif
 
-namespace Foundation.Ioc
+namespace Foundation
 {
     /// <summary>
     /// Decorates ScriptableObject or CLR Services with a default ctor.

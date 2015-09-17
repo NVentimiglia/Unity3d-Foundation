@@ -6,7 +6,9 @@
 //  -------------------------------------
 
 
-namespace Foundation.Databinding.Components
+using Foundation.Databinding;
+
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Interface for a UI interaction that receives binding messages from the context

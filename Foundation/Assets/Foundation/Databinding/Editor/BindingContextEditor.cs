@@ -8,11 +8,11 @@
 
 using System;
 using System.Linq;
-using Foundation.Databinding.Components;
+using Foundation.Databinding;
 using UnityEditor;
 using UnityEngine;
 
-namespace Foundation.Databinding.Editor
+namespace Foundation.Editor
 {
     [CustomEditor(typeof (BindingContext))]
     public class BindingContextEditor : UnityEditor.Editor

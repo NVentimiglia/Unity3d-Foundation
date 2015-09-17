@@ -9,12 +9,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Foundation.Messenging
+namespace Foundation
 {
     /// <summary>
     /// an abstract weak-event message for object signals.
-    /// Replaces SendMessage. Faster preformence, weak references. 
-    /// Allows for external (controller) event listening.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class ObjectMessage<T> {

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E7D2324D-947C-8D57-C554-D50434309EE4}</ProjectGuid>
+    <ProjectGuid>{4F2F87EB-4DAD-49E6-2662-C3ACF8651350}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -66,20 +66,21 @@
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
+    <Reference Include="Foundation.Databinding">
+      <HintPath>Assets\Plugins\Foundation.Databinding.dll</HintPath>
+    </Reference>
     <Reference Include="Foundation.Tasks">
       <HintPath>Assets\Plugins\Foundation.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="FullSerializer - Unity">
       <HintPath>Assets\Plugins\FullSerializer - Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Foundation.Databinding">
-      <HintPath>Assets\Plugins\Foundation.Databinding.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Plugins\JsonSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Foundation\README.txt" />
     <None Include="Assets\Foundation\Resources\Localization\Chinese\Examples.txt" />
     <None Include="Assets\Foundation\Resources\Localization\Dutch\Examples.txt" />
     <None Include="Assets\Foundation\Resources\Localization\English\Examples.txt" />

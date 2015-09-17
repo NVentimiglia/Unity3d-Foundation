@@ -9,7 +9,7 @@ using System.Collections;
 using Foundation.Databinding;
 using UnityEngine;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     /// <summary>
     ///     Example main menu

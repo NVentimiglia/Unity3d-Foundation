@@ -6,7 +6,7 @@
 //  -------------------------------------
 using System;
 
-namespace Foundation.Ioc
+namespace Foundation
 {
     /// <summary>
     /// Decorate a public field or property with this. Tells the Injector to resolve the dependency.

@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
-using Assets.Foundation.Localization.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Foundation.Localization.Editor
+namespace Foundation.Editor
 {
     [CustomEditor(typeof(LocalizationService), true)]
     public class LocalizationServiceEditor : UnityEditor.Editor

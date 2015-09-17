@@ -9,7 +9,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Sets a GameObject's Visual State (SetActive) by comparing to a property's bool value

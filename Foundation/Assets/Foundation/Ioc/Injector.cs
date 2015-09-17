@@ -13,7 +13,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 #endif
 
-namespace Foundation.Ioc
+namespace Foundation
 {
     /// <summary>
     /// The Injector is a static application service for resolving dependencies by asking for a components type or interface

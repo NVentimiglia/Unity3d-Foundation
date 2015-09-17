@@ -7,12 +7,12 @@
 
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Attach next to an AudioSource to let the AudioManager multiply the sources volume by its AudioLayer.
     /// </summary>
-    [AddComponentMenu("Foundation/Databinding/AudioRegulator")]
+    [AddComponentMenu("Foundation/Audio/AudioRegulator")]
     [RequireComponent(typeof (AudioSource))]
     public class AudioRegulator : MonoBehaviour
     {

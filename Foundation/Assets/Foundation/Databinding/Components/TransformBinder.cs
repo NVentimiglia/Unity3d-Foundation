@@ -8,7 +8,7 @@
 
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     Vector3 --> Transform

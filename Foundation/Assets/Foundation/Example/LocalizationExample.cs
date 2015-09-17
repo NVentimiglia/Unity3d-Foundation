@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Foundation.Localization;
 using UnityEngine;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     [AddComponentMenu("Foundation/Examples/LocalizationExample")]
     public class LocalizationExample : MonoBehaviour

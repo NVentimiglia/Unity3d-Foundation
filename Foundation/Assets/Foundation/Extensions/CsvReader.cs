@@ -6,7 +6,7 @@
 //  -------------------------------------
 using System.Collections.Generic;
 
-namespace Foundation.Localization
+namespace Foundation
 {
     /// <summary>
     /// Class to read csv content from various sources

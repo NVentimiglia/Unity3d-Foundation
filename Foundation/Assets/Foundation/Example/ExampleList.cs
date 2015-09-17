@@ -11,7 +11,7 @@ using System.Linq;
 using Foundation.Databinding;
 using UnityEngine;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     /// <summary>
     ///     Demonstration of a child view model

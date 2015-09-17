@@ -5,16 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{29982686-B04A-0DA4-BD83-3B0084A3009A}</ProjectGuid>
+    <ProjectGuid>{5879E42E-005A-52A1-DC30-0BFEFF49DA19}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
-    <UnityProjectType>Editor:5</UnityProjectType>
+    <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.2.0f3</UnityVersion>
     <RootNamespace></RootNamespace>
@@ -51,59 +51,14 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Advertisements">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.UI">
-      <HintPath>Library\UnityAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Graphs">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Android.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WP8.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WP8.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Metro.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Metro.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Tizen.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Tizen.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.SamsungTV.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.SamsungTV.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WebGL.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WebGL.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.LinuxStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WindowsStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.OSXStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.OSXStandalone.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>Library\UnityAssemblies\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+    <Reference Include="UnityEditor">
+      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>Library\UnityAssemblies\Mono.Cecil.dll</HintPath>
@@ -111,42 +66,88 @@
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
+    <Reference Include="Foundation.Databinding">
+      <HintPath>Assets\Plugins\Foundation.Databinding.dll</HintPath>
+    </Reference>
     <Reference Include="Foundation.Tasks">
       <HintPath>Assets\Plugins\Foundation.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="FullSerializer - Unity">
       <HintPath>Assets\Plugins\FullSerializer - Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Foundation.Databinding">
-      <HintPath>Assets\Plugins\Foundation.Databinding.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Foundation Databinding.CSharp.Plugins.csproj">
-      <Project>{E7D2324D-947C-8D57-C554-D50434309EE4}</Project>
-      <Name>Foundation Databinding.CSharp.Plugins</Name>
-    </ProjectReference>
-    <ProjectReference Include="Foundation Databinding.CSharp.csproj">
-      <Project>{6F98D1DF-A93B-90AB-954D-AE9C75F5FED3}</Project>
-      <Name>Foundation Databinding.CSharp</Name>
+    <ProjectReference Include="Foundation.CSharp.Plugins.csproj">
+      <Project>{4F2F87EB-4DAD-49E6-2662-C3ACF8651350}</Project>
+      <Name>Foundation.CSharp.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Foundation\Databinding\Editor\BinderEditor.cs" />
-    <Compile Include="Assets\Foundation\Databinding\Editor\BindingContextEditor.cs" />
-    <Compile Include="Assets\Foundation\Databinding\Editor\EditorMembersHelper.cs" />
-    <Compile Include="Assets\Foundation\Databinding\Editor\FindMissingScriptsRecursively.cs" />
-    <Compile Include="Assets\Foundation\Databinding\Editor\HierarchyKeySorting.cs" />
-    <Compile Include="Assets\Foundation\Databinding\Editor\LocalizeFormatStringEditor.cs" />
-    <Compile Include="Assets\Foundation\Ioc\Editor\InstantiateScriptableObjects.cs" />
-    <Compile Include="Assets\Foundation\Localization\Editor\EditorCoroutine.cs" />
-    <Compile Include="Assets\Foundation\Localization\Editor\LocalizationInitializer.cs" />
-    <Compile Include="Assets\Foundation\Localization\Editor\LocalizationPostprocessor.cs" />
-    <Compile Include="Assets\Foundation\Localization\Editor\LocalizationServiceEditor.cs" />
-    <Compile Include="Assets\Foundation\Localization\Editor\LocalizedTextEditor.cs" />
-    <Compile Include="Assets\Foundation\Localization\Editor\TranslationService.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Audio\Audio2DListener.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Audio\Audio2DSource.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Audio\AudioManager.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Audio\AudioRegulator.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\AnimatedVisibilityBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\AnimationBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ButtonBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ButtonKey.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ButtonParamater.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ButtonValueBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\DropdownBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\FillAmmountBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ImageBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\InputFieldBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\KeyBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ListBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\LocalizeFormatString.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\PlayAnimationBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\PointerScaleTween.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\RawImageBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\SelectOnEnable.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\SliderBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\SliderLabel.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\TabNavigation.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\TextBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\TextHeightLayout.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\ToggleBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\TransformBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\TweenColorBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\VisibilityBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\VisualStateBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Components\VisualStatesBinder.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Core\BindingBase.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Core\BindingContext.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Core\BindingExtensions.cs" />
+    <Compile Include="Assets\Foundation\Databinding\Core\IBindingElement.cs" />
+    <Compile Include="Assets\Foundation\Example\DatabindingTester.cs" />
+    <Compile Include="Assets\Foundation\Example\ExampleList.cs" />
+    <Compile Include="Assets\Foundation\Example\ExampleMainMenu.cs" />
+    <Compile Include="Assets\Foundation\Example\ExampleNotifyChanged.cs" />
+    <Compile Include="Assets\Foundation\Example\ExampleOptions.cs" />
+    <Compile Include="Assets\Foundation\Example\IocExample.cs" />
+    <Compile Include="Assets\Foundation\Example\LocalizationExample.cs" />
+    <Compile Include="Assets\Foundation\Example\MessengerExample.cs" />
+    <Compile Include="Assets\Foundation\Example\TaskTests.cs" />
+    <Compile Include="Assets\Foundation\Example\TaskTests2.cs" />
+    <Compile Include="Assets\Foundation\Extensions\CsvReader.cs" />
+    <Compile Include="Assets\Foundation\Extensions\ReflectionExtensions.cs" />
+    <Compile Include="Assets\Foundation\Ioc\ExportAttribute.cs" />
+    <Compile Include="Assets\Foundation\Ioc\ImportAttribute.cs" />
+    <Compile Include="Assets\Foundation\Ioc\Injector.cs" />
+    <Compile Include="Assets\Foundation\Ioc\InjectorInitialized.cs" />
+    <Compile Include="Assets\Foundation\Localization\LanguageInfo.cs" />
+    <Compile Include="Assets\Foundation\Localization\LocalizationService.cs" />
+    <Compile Include="Assets\Foundation\Localization\LocalizedAttribute.cs" />
+    <Compile Include="Assets\Foundation\Localization\LocalizedText.cs" />
+    <Compile Include="Assets\Foundation\Messenging\CachedMessage.cs" />
+    <Compile Include="Assets\Foundation\Messenging\IMessengerObject.cs" />
+    <Compile Include="Assets\Foundation\Messenging\Messenger.cs" />
+    <Compile Include="Assets\Foundation\Messenging\MessengerHandler.cs" />
+    <Compile Include="Assets\Foundation\Messenging\ObjectMessage.cs" />
+    <Compile Include="Assets\Foundation\Messenging\SubscribeAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Foundation\README.txt" />
     <None Include="Assets\Foundation\Resources\Localization\Chinese\Examples.txt" />
     <None Include="Assets\Foundation\Resources\Localization\Dutch\Examples.txt" />
     <None Include="Assets\Foundation\Resources\Localization\English\Examples.txt" />

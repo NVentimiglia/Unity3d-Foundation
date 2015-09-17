@@ -15,7 +15,7 @@ using Foundation.Localization;
 using UnityEditor;
 using UnityEngine;
 
-namespace Foundation.Databinding.Editor
+namespace Foundation.Editor
 {
     /// <summary>
     /// Handles the finding of the Context

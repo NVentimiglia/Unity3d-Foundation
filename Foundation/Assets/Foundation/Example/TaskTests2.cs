@@ -1,7 +1,7 @@
 using Foundation.Tasks;
 using UnityEngine;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     [AddComponentMenu("Foundation/Examples/TaskTests2")]
     public class TaskTests2 : MonoBehaviour {

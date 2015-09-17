@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Foundation.Ioc
+namespace Foundation
 {
     internal static class ReflectionExtensions
     {

@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Foundation.Messenging
+namespace Foundation
 {
     /// <summary>
     /// Attribute for identifying method handlers for automatic Messenger subscription

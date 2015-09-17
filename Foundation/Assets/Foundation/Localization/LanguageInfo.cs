@@ -6,7 +6,7 @@
 //  -------------------------------------
 using System;
 
-namespace Foundation.Localization
+namespace Foundation
 {
     /// <summary>
     /// Name and two letter Abbreviation

@@ -6,11 +6,10 @@
 //  -------------------------------------
 using System;
 using System.Linq;
-using Foundation.Localization;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Foundation.Localization.Editor
+namespace Foundation.Editor
 {
     /// <summary>
     /// Handles the finding of the Context

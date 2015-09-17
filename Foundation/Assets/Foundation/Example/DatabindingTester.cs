@@ -6,7 +6,7 @@ using Foundation.Databinding;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Foundation.Example
+namespace Foundation.Example
 {
     [AddComponentMenu("Foundation/Examples/DatabindingTester")]
     public class DatabindingTester : ObservableBehaviour

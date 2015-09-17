@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Reflection;
+using Foundation.Internal;
 
-namespace Foundation.Messenging
+namespace Foundation
 {
     /// <summary>
     /// A message broker for global message propagation. (global events, pub/sub pattern.)

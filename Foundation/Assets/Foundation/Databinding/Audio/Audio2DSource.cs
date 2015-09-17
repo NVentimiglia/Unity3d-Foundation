@@ -9,13 +9,13 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Foundation.Databinding.Components
+namespace Foundation.Databinding
 {
     /// <summary>
     ///     An audio source for playing UI sounds. Depends on the Audio2D Listener.
     /// </summary>
     [Serializable]
-    [AddComponentMenu("Foundation/Databinding/Audio2DSource")]
+    [AddComponentMenu("Foundation/Audio/Audio2DSource")]
     public class Audio2DSource : MonoBehaviour
     {
         // settings

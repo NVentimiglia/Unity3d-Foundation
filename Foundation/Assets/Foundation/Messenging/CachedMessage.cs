@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Foundation.Messenging
+namespace Foundation
 {
     /// <summary>
     /// Marks the message as cached

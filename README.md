@@ -12,8 +12,9 @@ If you like this toolkit and want to see a high quality example of what you can 
 ## Features
 
 - Modular design, choose what parts you want
-- Databinding fully supports uGUI
-- Mvvm (model-view-viewmodel) supports standard INotifyPropertyChange.
+- Databinding fully supports uGUI with custom editor inspectors
+- Databinding supports interfaces, structs, pocos, and monobehaviours
+- Mvvm (model-view-viewmodel) supports standard INotifyPropertyChange
 - UnityTasks supports running in the background or as coroutines
 - Localization supports CSV format and dynamic  translation
 - [Wiki documentation](https://github.com/NVentimiglia/Unity3d-Foundation/wiki)

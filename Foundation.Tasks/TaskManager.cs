@@ -134,7 +134,7 @@ namespace Foundation.Tasks
             }
             else
             {
-                Instance.StartCoroutine(Instance.RunCoroutineInfo(info));
+                Instance.StopCoroutine(Instance.RunCoroutineInfo(info));
             }
         }
 

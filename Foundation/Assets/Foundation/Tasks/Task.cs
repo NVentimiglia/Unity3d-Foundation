@@ -89,7 +89,7 @@ namespace Foundation.Tasks
     ///        Debug.LogException(task.Exception)
     ///</code>
     ///</example>
-    public partial class UnityTask : IDisposable
+    public partial class UnityTask : YieldInstruction,	IDisposable
     {
         #region options
         /// <summary>

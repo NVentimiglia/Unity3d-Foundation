@@ -1,0 +1,20 @@
+@model HandleErrorInfo
+
+@{
+    if (Model != null)
+    {
+        ViewBag.Title = ViewBag.Title ?? "Error";
+        ViewBag.Description = Model.Exception.Message;
+    }
+    else
+    {
+        ViewBag.Title = ViewBag.Title ?? "Error";
+        ViewBag.Description = ViewBag.Description ?? "Sorry, an internal error has occurred. Please try again.";
+    }
+}
+
+
+<div class="bs-callout bs-callout-danger">
+    <h3>@ViewBag.Title</h3>
+    <p>@ViewBag.Description</p>
+</div>

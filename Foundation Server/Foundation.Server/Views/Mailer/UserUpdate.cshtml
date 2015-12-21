@@ -1,0 +1,20 @@
+@using Foundation.Server.Infrastructure
+@model  Foundation.Server.Models.UserUpdateViewModel
+@{
+    var config = AppConfig.Settings;
+}
+<div>
+    <h2>@config.AppName Account Services</h2>
+    <hr />
+    <p>
+        You are receiving this email because you updated your account. Your new account details are below.
+    </p>
+    <ul>
+        <li>UserId : @Model.UserId</li>
+        <li>Old Email : @Model.OldEmail</li>
+        <li>New Email : @Model.UserEmail</li>
+    </ul>
+    <br />
+    <br />
+    <a href="@config.AppDomain"> <b>- @config.AppName Support</b></a>
+</div>

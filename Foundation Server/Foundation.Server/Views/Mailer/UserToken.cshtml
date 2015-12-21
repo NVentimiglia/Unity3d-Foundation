@@ -1,0 +1,21 @@
+@using Foundation.Server.Infrastructure
+@model  Foundation.Server.Models.UserTokenViewModel
+
+@{
+    var config = AppConfig.Settings;
+}
+
+
+<div>
+    <h2>@config.AppName Account Services</h2>
+    <hr />
+    <p>
+        Hello enter the confirmation token below into your game screen.
+    </p>
+    <p>
+        <b>@Model.Token</b>
+    </p>
+    <br />
+    <br />
+    <a href="@config.AppDomain"> <b>- @config.AppName Support</b></a>
+</div>

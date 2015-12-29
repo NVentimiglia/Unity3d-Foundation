@@ -8,7 +8,7 @@ This is a starter framework with common application services for building qualit
 - Webserver supports authentication, emails, facebook, and databases
 - Databinding, observable, and MVVM support for uGUI
 - Localization in 14 languages with automatic translation
-- Realtime SDK included : The cloud hosted networking solution
+- [Realtime SDK included : The cloud hosted networking solution](https://github.com/NVentimiglia/Realtime-Unity3d)
 - Task library, Message Center, Inversion of Control, and a bunch more
  
 ## Platforms

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -62,34 +63,44 @@ namespace Foundation.Example
             Log = condition;
         }
 
-        void Start()
+        IEnumerator Start()
         {
 
             Logger.text = string.Empty;
             Debug.Log("Starting IOC Test");
+            yield return new WaitForSeconds(.5f);
 
             Injector.ConfirmInit();
             Injector.Subscribe(this);
 
             var inst5 = Injector.GetFirst<ExampleExport2>();
             Assert(() => inst5 != null, "InjectorInitialized");
+            yield return new WaitForSeconds(.5f);
 
             Injector.AddExport(ExampleExport.Create());
 
             var inst = Injector.GetFirst<ExampleExport>();
             Assert(() => inst != null, "GetFirst Class");
+            yield return new WaitForSeconds(.5f);
 
             var inst2 = Injector.GetFirst<IExampleExport>();
             Assert(() => inst2 != null, "GetFirst Interface");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer1 != null, "Import Single");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer2 != null, "Import IEnumerable");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer3 != null, "Import Array");
+            yield return new WaitForSeconds(.5f);
 
             Injector.RemoveExport(inst2);
             var inst3 = Injector.GetFirst<IExampleExport>();
             Assert(() => inst3 == null, "Removed");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer1 == null, "Import Single");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer2 == null || !Importer2.Any(), "Import Multiple");
+            yield return new WaitForSeconds(.5f);
 
             Injector.AddExport(ExampleExport.Create());
             Injector.AddExport(ExampleExport.Create());
@@ -99,10 +110,14 @@ namespace Foundation.Example
 
             var inst4 = Injector.GetAll<IExampleExport>();
             Assert(() => inst4.Count() == 5, "Get All");
+            yield return new WaitForSeconds(.5f);
 
             Assert(() => Importer1 != null, "Import Single");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer2.Count() == 5, "Import IEnumerable");
+            yield return new WaitForSeconds(.5f);
             Assert(() => Importer3.Length == 5, "Import Array");
+            yield return new WaitForSeconds(.5f);
 
             Debug.Log("All Done");
         }

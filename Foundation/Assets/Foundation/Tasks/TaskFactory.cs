@@ -58,39 +58,9 @@ namespace Foundation.Tasks
             task.Start();
             return task;
         }
-
-        /// <summary>
-        /// Creates a new running task
-        /// </summary>
-        public static UnityTask Run<TP>(Action<TP> action, TP param)
-        {
-            var task = new UnityTask(action, param, TaskStrategy.CurrentThread);
-            task.Start();
-            return task;
-        }
-
-        /// <summary>
-        /// Creates a new running task
-        /// </summary>
-        public static UnityTask RunOnMain<TP>(Action<TP> action, TP param)
-        {
-            var task = new UnityTask(action, param, TaskStrategy.MainThread);
-            task.Start();
-            return task;
-        }
-
-        /// <summary>
-        /// Creates a new running task
-        /// </summary>
-        public static UnityTask RunOnCurrent<TP>(Action<TP> action, TP param)
-        {
-            var task = new UnityTask(action, param, TaskStrategy.CurrentThread);
-            task.Start();
-            return task;
-        }
-
         #endregion
-        
+
+
         #region Coroutine
 
         /// <summary>
@@ -140,15 +110,6 @@ namespace Foundation.Tasks
         /// <summary>
         /// Creates a new running task
         /// </summary>
-        public static UnityTask<TResult> Run<TParam, TResult>(Func<TParam, TResult> function, TParam param)
-        {
-            var task = new UnityTask<TResult>(function, param);
-            task.Start();
-            return task;
-        }
-        /// <summary>
-        /// Creates a new running task
-        /// </summary>
         public static UnityTask<TResult> RunOnMain<TResult>(Func<TResult> function)
         {
             var task = new UnityTask<TResult>(function, TaskStrategy.MainThread);
@@ -159,29 +120,9 @@ namespace Foundation.Tasks
         /// <summary>
         /// Creates a new running task
         /// </summary>
-        public static UnityTask<TResult> RunOnMain<TParam, TResult>(Func<TParam, TResult> function, TParam param)
-        {
-            var task = new UnityTask<TResult>(function, param, TaskStrategy.MainThread);
-            task.Start();
-            return task;
-        } 
-        
-        /// <summary>
-        /// Creates a new running task
-        /// </summary>
         public static UnityTask<TResult> RunOnCurrent<TResult>(Func<TResult> function)
         {
             var task = new UnityTask<TResult>(function, TaskStrategy.CurrentThread);
-            task.Start();
-            return task;
-        }
-
-        /// <summary>
-        /// Creates a new running task
-        /// </summary>
-        public static UnityTask<TResult> RunOnCurrent<TParam, TResult>(Func<TParam, TResult> function, TParam param)
-        {
-            var task = new UnityTask<TResult>(function, param, TaskStrategy.CurrentThread);
             task.Start();
             return task;
         }
@@ -203,7 +144,6 @@ namespace Foundation.Tasks
         {
             var task = new UnityTask<TResult>();
             task.Strategy = TaskStrategy.Coroutine;
-            task.Paramater = task;
             task._routine = function(task);
             task.Start();
             return task;
@@ -261,26 +201,9 @@ namespace Foundation.Tasks
         /// <summary>
         /// A default task in the faulted state
         /// </summary>
-        public static UnityTask<T> FailedTask<T>(Exception ex)
+        public static UnityTask<T> FailedTask<T>(Exception ex) 
         {
             return new UnityTask<T>(TaskStrategy.Custom) { Status = TaskStatus.Faulted, Exception = ex };
-        }
-
-
-        /// <summary>
-        /// A default task in the faulted state
-        /// </summary>
-        public static UnityTask<T> FailedTask<T>(string exception, T result)
-        {
-            return FailedTask(new Exception(exception), result);
-        }
-
-        /// <summary>
-        /// A default task in the faulted state
-        /// </summary>
-        public static UnityTask<T> FailedTask<T>(Exception ex, T result)
-        {
-            return new UnityTask<T>(TaskStrategy.Custom) { Status = TaskStatus.Faulted, Exception = ex, Result = result };
         }
         #endregion
 

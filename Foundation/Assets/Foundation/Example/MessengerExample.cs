@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -68,11 +69,12 @@ namespace Foundation.Example
             Debug.Log("Handling object");
         }
 
-        void Start()
+        IEnumerator Start()
         {
 
             Logger.text = string.Empty;
             Debug.Log("Starting Messaging Test");
+            yield return new WaitForSeconds(1);
             Counts = 0;
 
             var m = new ExampleMessage();
@@ -81,18 +83,21 @@ namespace Foundation.Example
             Messenger.Subscribe(this);
             Messenger.Publish(m);
             Assert(() => Counts == 2, "Sub Then Pub");
+            yield return new WaitForSeconds(1);
         
             Messenger.Unsubscribe(this);
             Messenger.Publish(m2);
             Messenger.Subscribe(this);
             Messenger.ClearCache();
             Assert(() => Counts == 3, "Cached Sub / Pub");
-        
+            yield return new WaitForSeconds(1);
+
             Messenger.Unsubscribe(this);
             Messenger<object>.Subscribe(ObjectHandler);
             Messenger.Publish(m);
             Messenger.Publish(m2);
             Assert(() => Counts == 5, "Manual Sub / Pub");
+            yield return new WaitForSeconds(1);
 
             Debug.Log("All Done");
         }

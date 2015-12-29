@@ -6,13 +6,12 @@
 //  -------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using Foundation.Tasks;
 using FullSerializer;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
     /// Error Response
@@ -44,6 +43,11 @@ namespace Assets.Foundation.Server
         string Session { get; set; }
 
         /// <summary>
+        /// timeout
+        /// </summary>
+        bool IsWebException { get; set; }
+
+        /// <summary>
         /// HTTP Status Code
         /// </summary>
         HttpStatusCode StatusCode { get; set; }
@@ -52,12 +56,17 @@ namespace Assets.Foundation.Server
         /// Specific error details
         /// </summary>
         HttpMetadata Metadata { get; set; }
-
-        Exception Exception { get; set; }
-
-        TaskStatus Status { get; set; }
-
+        
+        /// <summary>
+        /// WWW Json to String
+        /// </summary>
         void DeserializeResult();
+
+        /// <summary>
+        /// custom complete
+        /// </summary>
+        /// <param name="ex"></param>
+        void Complete(Exception ex = null);
     }
 
 
@@ -75,6 +84,11 @@ namespace Assets.Foundation.Server
         /// Server Session
         /// </summary>
         public string Session { get; set; }
+
+        /// <summary>
+        /// timeout
+        /// </summary>
+        public bool IsWebException { get; set; }
 
         /// <summary>
         /// HTTP Status Code
@@ -101,31 +115,16 @@ namespace Assets.Foundation.Server
             Status = TaskStatus.Faulted;
             StatusCode = HttpStatusCode.BadRequest;
         }
-
+        
         public void DeserializeResult()
         {
             // no result
         }
-        public UnityTask AsTask()
-        {
-            var task = new UnityTask(TaskStrategy.Custom);
-            if (IsCompleted)
-            {
-                task.Exception = Exception;
-                task.Status = Status;
-            }
-            else
-                TaskManager.StartRoutine(AsTaskAsync(task));
-            return task;
-        }
 
-        private IEnumerator AsTaskAsync(UnityTask task)
-        {
-            while (!IsCompleted)
-                yield return 1;
 
-            task.Exception = Exception;
-            task.Status = Status;
+        public static HttpTask Failure(string error)
+        {
+            return new HttpTask { Strategy = TaskStrategy.Custom, Status = TaskStatus.Faulted, Exception = new Exception(error) };
         }
     }
 
@@ -144,6 +143,11 @@ namespace Assets.Foundation.Server
         /// Server Session
         /// </summary>
         public string Session { get; set; }
+
+        /// <summary>
+        /// timeout
+        /// </summary>
+        public bool IsWebException { get; set; }
 
         /// <summary>
         /// HTTP Status Code
@@ -179,28 +183,9 @@ namespace Assets.Foundation.Server
             Result = JsonSerializer.Deserialize<T>(Content);
         }
         
-        public UnityTask<T> AsTask()
+        public static HttpTask<T> Failure(string error)
         {
-            var task = new UnityTask<T>(TaskStrategy.Custom);
-            if (IsCompleted)
-            {
-                task.Result = Result;
-                task.Exception = Exception;
-                task.Status = Status;
-            }
-            else
-                TaskManager.StartRoutine(AsTaskAsync(task));
-            return task;
-        }
-
-        private IEnumerator AsTaskAsync(UnityTask<T> task)
-        {
-            while (!IsCompleted)
-                yield return 1;
-
-            task.Result = Result;
-            task.Exception = Exception;
-            task.Status = Status;
-        }
+          return new HttpTask<T> { Strategy = TaskStrategy.Custom, Status = TaskStatus.Faulted, Exception = new Exception(error) };
+        }   
     }
 }

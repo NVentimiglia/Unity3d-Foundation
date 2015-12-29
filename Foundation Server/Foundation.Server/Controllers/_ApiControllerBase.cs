@@ -5,6 +5,7 @@ using Foundation.Server.Infrastructure;
 using Foundation.Server.Infrastructure.Filters;
 using Foundation.Server.Infrastructure.Mailers;
 using Foundation.Server.Models;
+using AppSession = Foundation.Server.Infrastructure.AppSession;
 
 namespace Foundation.Server.Controllers
 {
@@ -105,7 +106,7 @@ namespace Foundation.Server.Controllers
             if (disposing)
             {
                 //Save auth
-                if (_appSession != null && _appAuthorization.IsAuthenticated)
+                if (_appAuthorization != null && _appAuthorization.IsAuthenticated)
                     Authorization.SetResponse();
 
                 //Save session

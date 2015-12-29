@@ -18,12 +18,18 @@ namespace Foundation.Server
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            //DEV MODE, new DB
+            // DEV MODE, new DB each load
             Database.SetInitializer(new DropCreateDatabaseAlways<AppDatabase>());
+            //Force refresh
+            new AppDatabase().Users.Find("");
+
+            //
 
             // Disable Database.SetInitializer in production
             // Database.SetInitializer(null);
-            //
+
+            // Alternatively, enable migrations
+            // https://msdn.microsoft.com/en-us/data/jj591621.aspx?f=255&MSPPError=-2147217396
         }
 
         // Custom User Identity / Principal
@@ -31,6 +37,11 @@ namespace Foundation.Server
         {
             // Get Custom User Session
             var ticket = AppAuthorization.GetSession();
+
+            if (ticket == null)
+            {
+                return;
+            }
 
             // Use Custom User Session to update Asp.net Identity
             var user = new FoundationPrincipal

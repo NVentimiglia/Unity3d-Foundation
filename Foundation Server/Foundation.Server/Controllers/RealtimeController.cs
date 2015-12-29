@@ -11,6 +11,7 @@ namespace Foundation.Server.Controllers
     /// </summary>
     public class ApiRealtimeController : ApiControllerBase
     {
+
         /// <summary>
         /// Signs the user into the Realtime Messenger service
         /// </summary>
@@ -36,7 +37,7 @@ namespace Foundation.Server.Controllers
                 86400,
                 AppConfig.Settings.RealtimeSecret,
                 model.Channels);
-
+            
             return Ok(details);
         }
 

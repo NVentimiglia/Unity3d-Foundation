@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountModels.cs" />
+    <Compile Include="APIConstants.cs" />
     <Compile Include="ScoresModels.cs" />
     <Compile Include="_DataAnnotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -42,6 +43,9 @@
     <Compile Include="StorageModels.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo f | xcopy "$(TargetDir)Foundation.Server.Unity3d.dll" "$(SolutionDir)..\Foundation\Assets\Plugins\Foundation.Server.Unity3d.dll"  /D /Y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

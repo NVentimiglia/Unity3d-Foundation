@@ -35,7 +35,7 @@ namespace Foundation.Server.Controllers
         public async Task<IEnumerable<JObject>> Get(string type, ODataQueryOptions options)
         {
             // Select Data
-            var objects = await AppDatabase.Objects
+            var objects = await AppDatabase.Storage
                 .OrderBy(o => o.ObjectScore)
                 .ToArrayAsync();
 
@@ -82,7 +82,7 @@ namespace Foundation.Server.Controllers
         [Route("api/Storage/Get/{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
-            var cloudObject = await AppDatabase.Objects.FindAsync(id);
+            var cloudObject = await AppDatabase.Storage.FindAsync(id);
             if (cloudObject == null)
             {
                 return Ok();
@@ -108,7 +108,7 @@ namespace Foundation.Server.Controllers
 
             foreach (var i in id)
             {
-                var cloudObject = await AppDatabase.Objects.FindAsync(i);
+                var cloudObject = await AppDatabase.Storage.FindAsync(i);
                 if (cloudObject != null)
                 {
                     data.Add(cloudObject.GetData());
@@ -129,15 +129,15 @@ namespace Foundation.Server.Controllers
         [ApiCheckModelForNull]
         [Authorize]
         [Route("api/Storage/Create")]
-        public async Task<IHttpActionResult> Create(AppObject cloudObject)
+        public async Task<IHttpActionResult> Create(StorageObject cloudObject)
         {
             cloudObject.ModifiedOn = cloudObject.CreatedOn = DateTime.UtcNow;
 
-            var entity = await AppDatabase.Objects.FindAsync(cloudObject.ObjectId);
+            var entity = await AppDatabase.Storage.FindAsync(cloudObject.ObjectId);
             if (entity != null)
                 return BadRequest("ObjectId is in use");
 
-            AppDatabase.Objects.Add(cloudObject);
+            AppDatabase.Storage.Add(cloudObject);
             await AppDatabase.SaveChangesAsync();
 
             return Ok(cloudObject.GetData());
@@ -153,9 +153,9 @@ namespace Foundation.Server.Controllers
         [ApiCheckModelForNull]
         [Authorize]
         [Route("api/Storage/Update")]
-        public async Task<IHttpActionResult> Update(AppObject cloudObject)
+        public async Task<IHttpActionResult> Update(StorageObject cloudObject)
         {
-            var entity = await AppDatabase.Objects.FindAsync(cloudObject.ObjectId);
+            var entity = await AppDatabase.Storage.FindAsync(cloudObject.ObjectId);
 
             if (entity == null)
                 return await Create(cloudObject);
@@ -199,9 +199,9 @@ namespace Foundation.Server.Controllers
         [ApiCheckModelForNull]
         [Authorize]
         [Route("api/Storage/Sync")]
-        public async Task<IHttpActionResult> Sync(AppObject cloudObject)
+        public async Task<IHttpActionResult> Sync(StorageObject cloudObject)
         {
-            var entity = await AppDatabase.Objects.FindAsync(cloudObject.ObjectId);
+            var entity = await AppDatabase.Storage.FindAsync(cloudObject.ObjectId);
 
             // create ?
             if (entity == null)
@@ -225,20 +225,20 @@ namespace Foundation.Server.Controllers
         [ApiCheckModelForNull]
         [Authorize]
         [Route("api/Storage/UpdateSet")]
-        public async Task<IHttpActionResult> UpdateSet(AppObject[] cloudObjects)
+        public async Task<IHttpActionResult> UpdateSet(StorageObject[] cloudObjects)
         {
             if (!cloudObjects.Any())
                 return Ok();
             
             foreach (var cloudObject in cloudObjects)
             {
-                var entity = await AppDatabase.Objects.FindAsync(cloudObject.ObjectId);
+                var entity = await AppDatabase.Storage.FindAsync(cloudObject.ObjectId);
 
                 if (entity == null)
                 {
                     cloudObject.ModifiedOn = cloudObject.CreatedOn = DateTime.UtcNow;
 
-                    AppDatabase.Objects.Add(cloudObject);
+                    AppDatabase.Storage.Add(cloudObject);
                 }
                 else
                 {
@@ -284,7 +284,7 @@ namespace Foundation.Server.Controllers
         [Route("api/Storage/UpdateProperty")]
         public async Task<IHttpActionResult> UpdateProperty(StorageProperty model)
         {
-            var entity = await AppDatabase.Objects.FindAsync(model.ObjectId);
+            var entity = await AppDatabase.Storage.FindAsync(model.ObjectId);
 
             if (entity == null)
                 return Ok();
@@ -327,7 +327,7 @@ namespace Foundation.Server.Controllers
         [Route("api/Storage/UpdateDelta")]
         public async Task<IHttpActionResult> UpdateDelta(StorageDelta model)
         {
-            var entity = await AppDatabase.Objects.FindAsync(model.ObjectId);
+            var entity = await AppDatabase.Storage.FindAsync(model.ObjectId);
 
             if (entity == null)
                 return Ok();
@@ -379,7 +379,7 @@ namespace Foundation.Server.Controllers
         [Route("api/Storage/Delete/{id}")]
         public async Task<IHttpActionResult> Delete(string id)
         {
-            var entity = await AppDatabase.Objects.FindAsync(id);
+            var entity = await AppDatabase.Storage.FindAsync(id);
 
             if (entity == null)
                 return Ok();
@@ -397,7 +397,7 @@ namespace Foundation.Server.Controllers
                     break;
             }
 
-            AppDatabase.Objects.Remove(entity);
+            AppDatabase.Storage.Remove(entity);
 
             await AppDatabase.SaveChangesAsync();
 

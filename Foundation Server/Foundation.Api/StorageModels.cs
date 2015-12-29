@@ -26,12 +26,6 @@ namespace Foundation.Server.Api
     public class StorageRequest
     {
         /// <summary>
-        /// Application Id
-        /// </summary>
-        [Required]
-        public string AppId { get; set; }
-
-        /// <summary>
         /// Unique object Id
         /// </summary>
         [Required]
@@ -88,12 +82,6 @@ namespace Foundation.Server.Api
     public class StorageDelta
     {
         /// <summary>
-        /// Application Id
-        /// </summary>
-        [Required]
-        public string AppId { get; set; }
-
-        /// <summary>
         /// Unique object Id
         /// </summary>
         [Required]
@@ -129,12 +117,6 @@ namespace Foundation.Server.Api
     /// </summary>
     public class StorageProperty
     {
-        /// <summary>
-        /// Application Id
-        /// </summary>
-        [Required]
-        public string AppId { get; set; }
-
         /// <summary>
         /// Unique object Id
         /// </summary>

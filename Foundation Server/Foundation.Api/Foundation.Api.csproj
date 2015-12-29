@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountModels.cs" />
+    <Compile Include="APIConstants.cs" />
     <Compile Include="ScoresModels.cs" />
     <Compile Include="StorageModels.cs" />
     <Compile Include="RealtimeModels.cs" />

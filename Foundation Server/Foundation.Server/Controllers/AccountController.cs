@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net.Mail;
@@ -25,8 +24,34 @@ namespace Foundation.Server.Controllers
             get { return AppConfig.Settings.AesKey; }
         }
 
-
         #region Guest / Device
+
+
+        /// <summary>
+        /// Creates a new User
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        [Route("api/Account/Get")]
+        public async Task<IHttpActionResult> Get()
+        {
+            // Registered User
+            if (await AppDatabase.Users.AnyAsync(o => o.Id == UserId))
+                return BadRequest("UserId is in use. Try password reset.");
+
+            var user = await AppDatabase.Users.FirstOrDefaultAsync(o => o.Id == UserId);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            Authorization.UpdateFrom(user);
+            Session.UpdateFrom(user);
+
+            return Ok(GetAccountDetails());
+        }
 
         /// <summary>
         /// Creates a new User
@@ -34,7 +59,7 @@ namespace Foundation.Server.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api/Account/Guest")]
-        public async Task<IHttpActionResult> Guest(AccountGuestRequest model)
+        public async Task<IHttpActionResult> Guest(AccountGuestSignIn model)
         {
             // Registered User
             if (await AppDatabase.Users.AnyAsync(o => o.Id == model.UserId && !string.IsNullOrEmpty(o.Email)))
@@ -46,7 +71,6 @@ namespace Foundation.Server.Controllers
 
             return Ok(GetAccountDetails());
         }
-
         
         #endregion
 
@@ -58,16 +82,14 @@ namespace Foundation.Server.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api/Account/SignIn")]
-        public async Task<IHttpActionResult> SignIn(AccountEmailRequest model)
+        public async Task<IHttpActionResult> SignIn(AccountEmailSignIn model)
         {
             var user = await AppDatabase.Users.FirstOrDefaultAsync(o => o.Email == model.Email);
 
             if (user == null)
                 return await Create(model);
 
-            var password = AESHelper.Decrypt(user.PasswordHash, AesKey);
-
-            if (password != model.Password)
+            if (!user.EmailPassword.Compare(model.Password))
                 return BadRequest("Invalid password.");
 
             //Sign In
@@ -77,7 +99,7 @@ namespace Foundation.Server.Controllers
             return Ok(GetAccountDetails());
         }
 
-        public async Task<IHttpActionResult> Create(AccountEmailRequest model)
+        async Task<IHttpActionResult> Create(AccountEmailSignIn model)
         {
             if (string.IsNullOrEmpty(model.UserId))
                 model.UserId = Guid.NewGuid().ToString();
@@ -91,16 +113,15 @@ namespace Foundation.Server.Controllers
                 return BadRequest("Email is in use.");
             }
 
-            var user = new AppUser
+            var user = new UserAccount
             {
-                PasswordHash = AESHelper.Encrypt(model.Password, AesKey),
                 Email = model.Email,
                 Id = model.UserId,
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
-                ResetTokenExpires = DateTime.UtcNow,
+                EmailPassword = UserPassword.Create(model.Password),
+                PhonePassword = UserPassword.Create(model.Password),
             };
-
             AppDatabase.Users.Add(user);
 
             await AppDatabase.SaveChangesAsync();
@@ -125,8 +146,8 @@ namespace Foundation.Server.Controllers
         /// <returns></returns>
         [HttpPost]
         [ApiValidateModelState]
-        [Route("api/Account/Recover")]
-        public async Task<IHttpActionResult> Recovery(AccountRecoverRequest model)
+        [Route("api/Account/Reset")]
+        public async Task<IHttpActionResult> Reset(AccountEmailReset model)
         {
             var user = await AppDatabase.Users.FirstOrDefaultAsync(o => o.Email == model.Email);
 
@@ -134,13 +155,12 @@ namespace Foundation.Server.Controllers
                 return BadRequest("User not found");
 
             if (string.IsNullOrEmpty(user.Email))
-                return BadRequest("User lacks a valid email address. Did you use Facebook ?");
+                return BadRequest("User lacks a valid email address. Did you use Facebook or Twilio ?");
 
             var token = Strings.RandomString(6).ToLower();
 
             user.ModifiedOn = DateTime.UtcNow;
-            user.ResetToken = token;
-            user.ResetTokenExpires = DateTime.UtcNow.AddHours(24);
+            user.EmailPassword = UserPassword.Create(token);
 
             AppDatabase.Entry(user).State = EntityState.Modified;
 
@@ -157,79 +177,56 @@ namespace Foundation.Server.Controllers
         }
 
         /// <summary>
-        /// Updates the user's details using the recovery token
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("api/Account/Reset")]
-        public async Task<IHttpActionResult> Reset(AccountEmailResetRequest model)
-        {
-            var user = await AppDatabase.Users.FirstOrDefaultAsync(o => o.ResetToken == model.Token && o.ResetTokenExpires > DateTime.UtcNow);
-
-            if (user == null)
-                return BadRequest("User not found or token is invalid");
-
-            // update password
-            if (!string.IsNullOrEmpty(model.Password))
-                user.PasswordHash = AESHelper.Encrypt(model.Password, AesKey);
-
-            // update
-            user.ModifiedOn = DateTime.UtcNow;
-            user.ResetTokenExpires = DateTime.UtcNow;
-            AppDatabase.Entry(user).State = EntityState.Modified;
-            await AppDatabase.SaveChangesAsync();
-
-            //update session
-            Authorization.UpdateFrom(user);
-            Session.UpdateFrom(user);
-
-            return Ok(GetAccountDetails());
-        }
-
-        /// <summary>
         /// Updates the user's details.
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         [Authorize]
         [Route("api/Account/Update")]
-        public async Task<IHttpActionResult> Update(AccountEmailUpdateRequest model)
+        public async Task<IHttpActionResult> Update(AccountEmailUpdate model)
         {
             var user = await AppDatabase.Users.FindAsync(Session.UserId);
 
-            // no user? signUp. This happens from guest mode.
+            // no user? signUp. This happens from guest upgrades.
             if (user == null)
             {
-                return await Create(new AccountEmailRequest
+                return await Create(new AccountEmailSignIn
                 {
                     UserId = Session.UserId,
-                    Email = model.Email,
-                    Password = model.Password
+                    Email = model.NewEmail,
+                    Password = model.NewPassword
                 });
             }
 
             // make sure Email is not in use by someone else
             string oldEmail = null;
-            if (!string.IsNullOrEmpty(model.Email))
+            if (!string.IsNullOrEmpty(model.NewEmail))
             {
                 var users = await AppDatabase.Users
                     .Where(o => o.Id != Session.UserId)
-                    .AnyAsync(o => o.Email == model.Email);
+                    .AnyAsync(o => o.Email == model.NewEmail);
 
                 if (users)
                     return BadRequest("Email is in use.");
 
                 oldEmail = user.Email;
-                user.Email = model.Email;
+                user.Email = model.NewEmail;
             }
 
             // update password
-            if (!string.IsNullOrEmpty(model.Password))
-                user.PasswordHash = AESHelper.Encrypt(model.Password, AesKey);
+            if (!string.IsNullOrEmpty(model.NewPassword))
+            {
+                user.EmailPassword = UserPassword.Create(model.NewPassword);
+            }
+
+            // update password
+            if (!string.IsNullOrEmpty(model.NewEmail))
+            {
+                user.Email = model.NewEmail;
+            }
 
             // update
             user.ModifiedOn = DateTime.UtcNow;
-            user.ResetTokenExpires = DateTime.UtcNow;
             AppDatabase.Entry(user).State = EntityState.Modified;
             await AppDatabase.SaveChangesAsync();
 
@@ -237,9 +234,9 @@ namespace Foundation.Server.Controllers
             {
                 UserId = user.Id,
                 UserEmail = user.Email,
-                OldEmail = oldEmail
-            });
+                OldEmail = oldEmail,
 
+            });
 
             //update session
             Session.UpdateFrom(user);
@@ -256,24 +253,23 @@ namespace Foundation.Server.Controllers
         [HttpPost]
         [Authorize]
         [Route("api/Account/Delete")]
-        public async Task<IHttpActionResult> Delete(AccountEmailDeleteRequest model)
+        public async Task<IHttpActionResult> Delete(AccountEmailDelete model)
         {
-            var user = await AppDatabase.Users.FindAsync(model.UserId);
+            var user = await AppDatabase.Users.FindAsync(Authorization.UserId);
 
             if (user == null)
                 return BadRequest("User not found");
 
-            var password = AESHelper.Decrypt(user.PasswordHash, AesKey);
-            if (password != model.Password)
+            if (!user.EmailPassword.Compare(model.Password))
                 return BadRequest("Invalid password.");
-
-            if (!model.Email.Equals(user.Email, StringComparison.CurrentCultureIgnoreCase))
-                return BadRequest("Invalid email.");
             
             // delete
             await DeleteUser(user);
 
-            return Ok(GetAccountDetails());
+            Session.SignOut();
+            Authorization.SignOut();
+
+            return Ok();
         }
         #endregion
 
@@ -283,12 +279,9 @@ namespace Foundation.Server.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("api/Account/Facebook")]
-        public async Task<IHttpActionResult> Facebook(AccountFacebookRequest model)
+        [Route("api/Account/FacebookConnect")]
+        public async Task<IHttpActionResult> FacebookConnect(AccountFacebookConnect model)
         {
-            if (!AppConfig.Settings.FacebookEnabled)
-                return BadRequest("Social Signin disabled.");
-            
             if (!Authorization.IsAuthenticated)
             {
                 return await FacebookCreate(model);
@@ -297,7 +290,7 @@ namespace Foundation.Server.Controllers
             return await FacebookUpdate(model);
         }
 
-        public async Task<IHttpActionResult> FacebookCreate(AccountFacebookRequest model)
+        public async Task<IHttpActionResult> FacebookCreate(AccountFacebookConnect model)
         {
             var client = new FacebookClient(model.AccessToken);
             client.AppId = AppConfig.Settings.FacebookId;
@@ -306,7 +299,7 @@ namespace Foundation.Server.Controllers
             dynamic fbresult = client.Get("me?fields=id,email,first_name,last_name,gender,locale,link,timezone,location,picture");
             string email = fbresult.email;
 
-            var social = await AppDatabase.Socials.FindAsync(fbresult.id);
+            var social = await AppDatabase.UserFacebookClaims.FindAsync(fbresult.id);
 
             if (social != null)
             {
@@ -328,29 +321,28 @@ namespace Foundation.Server.Controllers
 
             // new user
             var password = new string(Guid.NewGuid().ToString().Take(7).ToArray());
-            var user = new AppUser
+            var user = new UserAccount
             {
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
                 Email = email,
                 Id = Guid.NewGuid().ToString(),
-                PasswordHash = AESHelper.Encrypt(password, AesKey),
+                EmailPassword = UserPassword.Create(password),
 
             };
             AppDatabase.Users.Add(user);
 
-            social = new SocialProfile
+            social = new UserFacebookClaim
             {
                 Id = fbresult.id,
                 UserId = user.Id,
                 User = user,
-                Provider = AccountConstants.FACEBOOK,
                 AccessToken = model.AccessToken
             };
 
             FacebookUpdateInternal(social, fbresult);
 
-            AppDatabase.Socials.Add(social);
+            AppDatabase.UserFacebookClaims.Add(social);
 
             await SendWelcomeMail(new UserEmailViewModel
             {
@@ -364,7 +356,7 @@ namespace Foundation.Server.Controllers
             return Ok(GetAccountDetails());
         }
 
-        public async Task<IHttpActionResult> FacebookUpdate(AccountFacebookRequest model)
+        public async Task<IHttpActionResult> FacebookUpdate(AccountFacebookConnect model)
         {
             var client = new FacebookClient(model.AccessToken);
             client.AppId = AppConfig.Settings.FacebookId;
@@ -372,18 +364,18 @@ namespace Foundation.Server.Controllers
 
             dynamic fbresult = client.Get("me?fields=id,email,first_name,last_name,gender,locale,link,timezone,location,picture");
 
-            var social = await AppDatabase.Socials.FindAsync(fbresult.id);
+            var social = await AppDatabase.UserFacebookClaims.FindAsync(fbresult.id);
             var user = await AppDatabase.Users.FindAsync(UserId);
 
             if (social == null)
             {
-                social = new SocialProfile();
+                social = new UserFacebookClaim();
                 social.Id = fbresult.id;
                 social.User = user;
                 social.UserId = UserId;
                 social.AccessToken = model.AccessToken;
-                social.Provider = AccountConstants.FACEBOOK;
-                AppDatabase.Socials.Add(social);
+                social.Provider = APIConstants.FACEBOOK;
+                AppDatabase.UserFacebookClaims.Add(social);
             }
 
             FacebookUpdateInternal(social, fbresult);
@@ -393,7 +385,7 @@ namespace Foundation.Server.Controllers
             return Ok(GetAccountDetails());
         }
 
-        void FacebookUpdateInternal(SocialProfile social, dynamic fbresult)
+        void FacebookUpdateInternal(UserFacebookClaim social, dynamic fbresult)
         {
             social.Email = fbresult.email;
             social.FirstName = fbresult.first_name;
@@ -410,35 +402,38 @@ namespace Foundation.Server.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [Route("api/Account/FacebookDelete")]
-        public async Task<IHttpActionResult> FacebookDelete(AccountFacebookDeleteRequest model)
+        [Route("api/Account/FacebookDisconnect")]
+        public async Task<IHttpActionResult> FacebookDisconnect(AccountFacebookDisconnect model)
         {
-            var user = await AppDatabase.Users.Include(o => o.Socials).FirstOrDefaultAsync(o => o.Id == UserId);
+            var user = await AppDatabase.Users.Include(o => o.UserFacebookClaims).FirstOrDefaultAsync(o => o.Id == UserId);
             if (user == null)
                 return BadRequest("User not found");
 
 
-            var social = user.Socials.FirstOrDefault(o => o.Provider == AccountConstants.FACEBOOK);
+            var social = user.UserFacebookClaims.FirstOrDefault();
             if (social == null)
                 return BadRequest("Social connection not found");
 
-            if (user.Socials.Count() == 1 && string.IsNullOrEmpty(user.Email))
+            if (user.UserFacebookClaims.Count() == 1 && string.IsNullOrEmpty(user.Email))
                 return BadRequest("Orphan Account. Please add an email.");
 
-            AppDatabase.Socials.Remove(social);
+            AppDatabase.UserFacebookClaims.Remove(social);
             await AppDatabase.SaveChangesAsync();
 
             return Ok(GetAccountDetails());
         }
 
         #endregion
-        
-        public async Task DeleteUser(AppUser user)
+
+        async Task DeleteUser(UserAccount user)
         {
             // delete
             AppDatabase.Entry(user).State = EntityState.Deleted;
-            AppDatabase.Objects.RemoveRange(AppDatabase.Objects.Where(o => o.AclParam == user.Id));
-            AppDatabase.Socials.RemoveRange(AppDatabase.Socials.Where(o => o.UserId == user.Id));
+            AppDatabase.Users.Remove(user);
+            AppDatabase.UserFacebookClaims.RemoveRange(AppDatabase.UserFacebookClaims.Where(o => o.UserId == user.Id));
+
+            AppDatabase.Storage.RemoveRange(AppDatabase.Storage.Where(o => o.AclParam == user.Id));
+            AppDatabase.Scores.RemoveRange(AppDatabase.Scores.Where(o => o.UserId == user.Id));
 
             await AppDatabase.SaveChangesAsync();
 
@@ -451,16 +446,11 @@ namespace Foundation.Server.Controllers
         AccountDetails GetAccountDetails()
         {
             return new AccountDetails
-                 {
-                     //For client reading
-                     Id = Session.UserId,
-                     Email = Session.Email,
-                     IsAuthenticated = Authorization.IsAuthenticated,
-                     FacebookId =  Session.FacebookId,
-
-                     //Header Data
-                     AuthorizationToken = Authorization.ToAesJson(),
-                     SessionToken = Session.ToAesJson()
+            {
+                //For client reading
+                Id = Session.UserId,
+                Email = Session.Email,
+                FacebookId = Session.FacebookId,
             };
         }
 

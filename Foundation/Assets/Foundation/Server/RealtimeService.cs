@@ -9,23 +9,18 @@ using System.Collections.Generic;
 using Foundation.Server.Api;
 using Foundation.Tasks;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
     /// Service for Realtime Messaging Authentication
     /// </summary>
-    public class RealtimeService
+    public class RealtimeService : ServiceClientBase
     {
         #region Internal
 
         public static readonly RealtimeService Instance = new RealtimeService();
-        
-        public CloudConfig Config
-        {
-            get { return CloudConfig.Instance; }
-        }
 
-        public readonly ServiceClient ServiceClient = new ServiceClient("Realtime");
+        RealtimeService() : base("Realtime"){}
 
         #endregion
 
@@ -37,7 +32,10 @@ namespace Assets.Foundation.Server
         /// <returns>Realtime Authentication Token to use</returns>
         public UnityTask<RealtimeToken> SignIn(Dictionary<string, string[] >channels = null)
         {
-            return ServiceClient.Post<RealtimeToken>("SignIn", new RealtimeSignIn
+            if (!IsAuthenticated)
+                return UnityTask.FailedTask<RealtimeToken>("Not authenticated");
+
+            return HttpPost<RealtimeToken>("SignIn", new RealtimeSignIn
             {
                 Channels = channels
 

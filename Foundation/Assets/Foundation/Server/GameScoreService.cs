@@ -7,33 +7,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Foundation.Server.Api;
-using FullSerializer;
+using Foundation.Tasks;
+using UnityEngine;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
-    /// CRUD service for untyped dynamic objects
+    /// Example strongly typed web api score service client
     /// </summary>
-    public class GameScoreService 
+    public class GameScoreService : ServiceClientBase
     {
         #region Internal
 
         public static readonly GameScoreService Instance = new GameScoreService();
 
-        public CloudConfig Config
-        {
-            get { return CloudConfig.Instance; }
-        }
-
-        public AccountService AccountService
-        {
-            get { return AccountService.Instance; }
-        }
-
-        public readonly ServiceClient ServiceClient = new ServiceClient("GameScore");
-
+        GameScoreService() : base("GameScore") { }
 
         #endregion
 
@@ -43,55 +32,43 @@ namespace Assets.Foundation.Server
         /// Gets the high score list
         /// </summary>
         /// <returns></returns>
-        public HttpTask<GameScore[]> Get(int take, int skip)
+        public UnityTask<GameScore[]> Get(int take, int skip)
         {
-            if (!Config.IsValid)
-                return new HttpTask<GameScore[]>(new Exception("Configuration is invalid"));
-
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask<GameScore[]>(new Exception("Not Authenticated"));
-
             var dto = new Dictionary<string, int>
             {
                 {"take", take},
-                { "skip", skip}
+                {"skip", skip}
             };
 
-            return ServiceClient.Post<GameScore[]>("Get", dto);
+            return HttpPost<GameScore[]>("Get", dto);
         }
 
         /// <summary>
         /// Returns your current score
         /// </summary>
         /// <returns></returns>
-        public HttpTask<GameScore> Self()
+        public UnityTask<GameScore> Self()
         {
-            if (!Config.IsValid)
-                return new HttpTask<GameScore>(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return UnityTask.FailedTask<GameScore>("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask<GameScore>(new Exception("Not Authenticated"));
-
-            return ServiceClient.Post<GameScore>("Self");
+            return HttpPost<GameScore>("Self");
         }
-        
+
         /// <summary>
         /// Posts the score to the server
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public HttpTask Update(GameScore entity)
+        public UnityTask Update(GameScore entity)
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return UnityTask.FailedTask<GameScore>("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
-            return ServiceClient.Post("Update", entity);
+            return HttpPost("Update", entity);
         }
-        
+
         #endregion
     }
 }

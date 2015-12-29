@@ -60,6 +60,16 @@ namespace System.ComponentModel.DataAnnotations
     /// Unity3d Comparability
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class PhoneAttribute : Attribute
+    {
+
+    }
+
+
+    /// <summary>
+    /// Unity3d Comparability
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class KeyAttribute : Attribute
     {
 

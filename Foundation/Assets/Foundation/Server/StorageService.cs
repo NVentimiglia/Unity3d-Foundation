@@ -5,33 +5,22 @@
 //  Published	: 2015
 //  -------------------------------------
 
-using System;
 using System.Linq;
 using Foundation.Server.Api;
 using FullSerializer;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
     /// CRUD service for untyped json objects
     /// </summary>
-    public class StorageService 
+    public class StorageService : ServiceClientBase
     {
         #region Internal
 
         public static readonly StorageService Instance = new StorageService();
 
-        public CloudConfig Config
-        {
-            get { return CloudConfig.Instance; }
-        }
-
-        public AccountService AccountService
-        {
-            get { return AccountService.Instance; }
-        }
-
-        public readonly ServiceClient ServiceClient = new ServiceClient("Storage");
+        public StorageService() : base("Storage"){}
         
         #endregion
 
@@ -45,12 +34,9 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask<T[]> Query<T>(ODataQuery<T> query) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask<T[]>(new Exception("Configuration is invalid"));
-            
             var meta = StorageMetadata.GetMetadata<T>();
 
-            return ServiceClient.Post(meta.TableName, query);
+            return HttpPost(meta.TableName, query);
         }
 
         /// <summary>
@@ -61,12 +47,12 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask<T> Get<T>(string id) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask<T>(new Exception("Configuration is invalid"));
-            
+            if (!IsAuthenticated)
+                return HttpTask<T>.Failure("Not authenticated");
+
             StorageMetadata.RegisterType<T>();
 
-            return ServiceClient.Post<T>("Get", id);
+            return HttpPost<T>("Get", id);
         }
 
         /// <summary>
@@ -77,12 +63,12 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask<T[]> GetSet<T>(string[] ids) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask<T[]>(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask<T[]>.Failure("Not authenticated");
 
             StorageMetadata.RegisterType<T>();
 
-            return ServiceClient.Post<T[]>("GetSet", ids);
+            return HttpPost<T[]>("GetSet", ids);
         }
 
         /// <summary>
@@ -93,6 +79,9 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask Create<T>(T entity) where T : class
         {
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
+
             return Create(entity, StorageACL.Public, null);
         }
 
@@ -106,17 +95,13 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask Create<T>(T entity, StorageACL acl, string param) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var meta = StorageMetadata.GetMetadata<T>();
 
             var model = new StorageRequest
             {
-                AppId = Config.Key,
                 ObjectId = meta.GetId(entity),
                 ObjectScore = float.Parse(meta.GetScore(entity)),
                 ObjectType = meta.TableName,
@@ -126,7 +111,7 @@ namespace Assets.Foundation.Server
                 ModifiedOn = meta.GetModified(entity),
             };
 
-            return ServiceClient.Post("Create", model);
+            return HttpPost("Create", model);
         }
 
         /// <summary>
@@ -137,17 +122,13 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask Update<T>(T entity) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var meta = StorageMetadata.GetMetadata<T>();
 
             var model = new StorageRequest
             {
-                AppId = Config.Key,
                 ObjectId = meta.GetId(entity),
                 ObjectScore = float.Parse(meta.GetScore(entity)),
                 ObjectType = meta.TableName,
@@ -155,7 +136,7 @@ namespace Assets.Foundation.Server
                 ModifiedOn = meta.GetModified(entity),
             };
 
-            return ServiceClient.Post("Update", model);
+            return HttpPost("Update", model);
         }
 
         /// <summary>
@@ -166,17 +147,13 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask<T> Sync<T>(T entity) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask<T>(new Exception("Configuration is invalid"));
-
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask<T>(new Exception("Not Authenticated"));
+            if (!IsAuthenticated)
+                return HttpTask<T>.Failure("Not authenticated");
 
             var meta = StorageMetadata.GetMetadata<T>();
 
             var model = new StorageRequest
             {
-                AppId = Config.Key,
                 ObjectId = meta.GetId(entity),
                 ObjectScore = float.Parse(meta.GetScore(entity)),
                 ObjectType = meta.TableName,
@@ -184,7 +161,7 @@ namespace Assets.Foundation.Server
                 ModifiedOn = meta.GetModified(entity),
             };
 
-            return ServiceClient.Post<T>("Sync", model);
+            return HttpPost<T>("Sync", model);
         }
 
 
@@ -196,24 +173,20 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask UpdateSet<T>(T[] entities) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var meta = StorageMetadata.GetMetadata<T>();
 
             var model = entities.Select(o => new StorageRequest
             {
-                AppId = Config.Key,
                 ObjectId = meta.GetId(o),
                 ObjectScore = float.Parse(meta.GetScore(o)),
                 ObjectType = meta.TableName,
                 ObjectData = JsonSerializer.Serialize(o),
             }).ToArray();
 
-            return ServiceClient.Post("UpdateSet", model);
+            return HttpPost("UpdateSet", model);
         }
 
         /// <summary>
@@ -223,23 +196,19 @@ namespace Assets.Foundation.Server
         /// <param name="propertyName"></param>
         /// <param name="propertyValue"></param>
         /// <returns></returns>
-        public HttpTask UpdateProperty(string id, string propertyName, string propertyValue) 
+        public HttpTask UpdateProperty(string id, string propertyName, string propertyValue)
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var model = new StorageProperty
             {
-                AppId = Config.Key,
                 ObjectId = id,
                 PropertyName = propertyName,
                 PropertyValue = propertyValue,
             };
 
-            return ServiceClient.Post("UpdateProperty", model);
+            return HttpPost("UpdateProperty", model);
         }
 
         /// <summary>
@@ -249,24 +218,20 @@ namespace Assets.Foundation.Server
         /// <param name="propertyName"></param>
         /// <param name="delta">change</param>
         /// <returns></returns>
-        public HttpTask UpdateDelta(string id, string propertyName, float delta = 1) 
+        public HttpTask UpdateDelta(string id, string propertyName, float delta = 1)
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var model = new StorageDelta
             {
-                AppId = Config.Key,
                 ObjectId = id,
                 PropertyName = propertyName,
                 Delta = delta,
                 IsFloat = true,
             };
 
-            return ServiceClient.Post("UpdateDelta", model);
+            return HttpPost("UpdateDelta", model);
         }
 
         /// <summary>
@@ -276,24 +241,20 @@ namespace Assets.Foundation.Server
         /// <param name="propertyName"></param>
         /// <param name="delta">change</param>
         /// <returns></returns>
-        public HttpTask UpdateDelta(string id,  string propertyName, int delta = 1) 
+        public HttpTask UpdateDelta(string id,  string propertyName, int delta = 1)
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var model = new StorageDelta
             {
-                AppId = Config.Key,
                 ObjectId = id,
                 PropertyName = propertyName,
                 Delta = delta,
                 IsFloat = false,
             };
 
-            return ServiceClient.Post("UpdateDelta", model);
+            return HttpPost("UpdateDelta", model);
         }
 
         /// <summary>
@@ -304,15 +265,12 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public HttpTask Delete<T>(T entity) where T : class
         {
-            if (!Config.IsValid)
-                return new HttpTask(new Exception("Configuration is invalid"));
+            if (!IsAuthenticated)
+                return HttpTask.Failure("Not authenticated");
 
-            if (!AccountService.IsAuthenticated)
-                return new HttpTask(new Exception("Not Authenticated"));
-            
             var meta = StorageMetadata.GetMetadata<T>();
 
-            return ServiceClient.Post("Delete", meta.GetId(entity));
+            return HttpPost("Delete", meta.GetId(entity));
         }
 
         #endregion

@@ -64,6 +64,14 @@
       <HintPath>..\packages\Facebook.7.0.6\lib\net45\Facebook.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ibt.Ortc.Api, Version=2.1.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ibt.Ortc.Api.dll.2.1.18\lib\net40\Ibt.Ortc.Api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ibt.Ortc.Api.Extensibility, Version=2.1.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ibt.Ortc.Api.dll.2.1.18\lib\net40\Ibt.Ortc.Api.Extensibility.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
@@ -77,6 +85,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.2\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">
@@ -178,6 +190,10 @@
     <Reference Include="System.Net.Http.WebRequest">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Twilio.Api, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Twilio.4.4.1\lib\3.5\Twilio.Api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -240,10 +256,13 @@
     <Compile Include="Infrastructure\Mailers\MailerController.cs" />
     <Compile Include="Infrastructure\ODataFilterHelper.cs" />
     <Compile Include="Infrastructure\OrtcHelper.cs" />
+    <Compile Include="Infrastructure\TwilioHelper.cs" />
     <Compile Include="Models\AppDatabase.cs" />
-    <Compile Include="Models\AppAuthorization.cs" />
-    <Compile Include="Models\AppSession.Helper.cs" />
-    <Compile Include="Models\AppSession.cs" />
+    <Compile Include="Infrastructure\AppAuthorization.cs" />
+    <Compile Include="Infrastructure\AppSession.Helper.cs" />
+    <Compile Include="Infrastructure\AppSession.cs" />
+    <Compile Include="Models\AccountDataModels.cs" />
+    <Compile Include="Models\StorageDataModels.cs" />
     <Compile Include="Models\MailerViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

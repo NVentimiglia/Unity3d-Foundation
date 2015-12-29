@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
     /// Tool for constructing OData queries

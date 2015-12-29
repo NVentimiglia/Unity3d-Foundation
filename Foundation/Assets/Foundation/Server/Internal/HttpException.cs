@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
     /// Extends with ModelState Errors

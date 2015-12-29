@@ -16,13 +16,9 @@ namespace Foundation.Tasks
     public enum TaskStatus
     {
         /// <summary>
-        /// Ready to run
-        /// </summary>
-        Created,
-        /// <summary>
         /// Working
         /// </summary>
-        Running,
+        Pending,
         /// <summary>
         /// Exception as thrown or otherwise stopped early
         /// </summary>
@@ -31,10 +27,6 @@ namespace Foundation.Tasks
         /// Complete without error
         /// </summary>
         Success,
-        /// <summary>
-        /// Dispose has been called
-        /// </summary>
-        Disposed,
     }
 
     /// <summary>
@@ -89,7 +81,7 @@ namespace Foundation.Tasks
     ///        Debug.LogException(task.Exception)
     ///</code>
     ///</example>
-    public partial class UnityTask : YieldInstruction,	IDisposable
+    public partial class UnityTask : CustomYieldInstruction, IDisposable
     {
         #region options
         /// <summary>
@@ -102,59 +94,40 @@ namespace Foundation.Tasks
         /// </summary>
         public static bool LogErrors = false;
         #endregion
-
-        #region fields
-        // ReSharper disable InconsistentNaming
-
-        /// <summary>
-        /// Input Parameter
-        /// </summary> 
-        public object Paramater { get; set; }
+        
+        #region properties
 
         /// <summary>
-        /// Execution option
+        /// Run execution path
         /// </summary>
         public TaskStrategy Strategy;
 
-        Action _action;
-        Delegate _action2;
-        protected IEnumerator _routine;
+        /// <summary>
+        /// Error
+        /// </summary>
+        public Exception Exception { get; protected set; }
 
-        protected List<Delegate> CompleteList = new List<Delegate>();
-        protected List<Delegate> SuccessList = new List<Delegate>();
+        /// <summary>
+        /// Run State
+        /// </summary>
+        public TaskStatus Status { get; protected set; }
 
-        #endregion
-
-        #region properties
-
-        private TaskStatus _status;
-        public TaskStatus Status
+        /// <summary>
+        /// Custom Yield
+        /// </summary>
+        public override bool keepWaiting
         {
-            get { return _status; }
-            set
-            {
-                if (_status == value)
-                    return;
-                _status = value;
-                
-                if (IsCompleted)
-                    OnTaskComplete();
-            }
+            get { return !IsCompleted; }
         }
 
-        public Exception Exception { get; set; }
-        
-        #endregion
-
-        #region computed properties
         public bool IsRunning
         {
-            get { return Status == TaskStatus.Running; }
+            get { return Status == TaskStatus.Pending; }
         }
 
         public bool IsCompleted
         {
-            get { return Status == TaskStatus.Success || Status == TaskStatus.Faulted; }
+            get { return (Status == TaskStatus.Success || Status == TaskStatus.Faulted) && !HasContinuations; }
         }
 
         public bool IsFaulted
@@ -166,6 +139,17 @@ namespace Foundation.Tasks
         {
             get { return Status == TaskStatus.Success; }
         }
+
+        public bool HasContinuations { get; protected set; }
+        #endregion
+
+        #region private
+
+        protected TaskStatus _status;
+        protected Action _action;
+        protected IEnumerator _routine;
+        List<Delegate> _completeList;
+
         #endregion
 
         #region constructor
@@ -178,16 +162,14 @@ namespace Foundation.Tasks
         /// <summary>
         /// Creates a new task
         /// </summary>
-        protected UnityTask()
+        public UnityTask()
         {
-            Status = TaskStatus.Created;
         }
 
         /// <summary>
         /// Creates a new task
         /// </summary>
         public UnityTask(TaskStrategy mode)
-            : this()
         {
             Strategy = mode;
         }
@@ -208,7 +190,6 @@ namespace Foundation.Tasks
         /// </summary>
         /// <param name="action"></param>
         public UnityTask(Action action)
-            : this()
         {
             _action = action;
 #if UNITY_WEBGL
@@ -247,57 +228,6 @@ namespace Foundation.Tasks
             Strategy = TaskStrategy.Coroutine;
         }
 
-
-        /// <summary>
-        /// Creates a new Coroutine Task
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="param"></param>
-        public UnityTask(IEnumerator action, object param)
-            : this()
-        {
-            if (action == null)
-                throw new ArgumentNullException("action");
-
-            _routine = action;
-            Strategy = TaskStrategy.Coroutine;
-            Paramater = param;
-        }
-
-        /// <summary>
-        /// Creates a new background task with a parameter
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="paramater"></param>
-        public UnityTask(Delegate action, object paramater)
-            : this()
-        {
-            _action2 = action;
-#if UNITY_WEBGL
-            Strategy = TaskStrategy.MainThread;
-#else
-            Strategy = TaskStrategy.BackgroundThread;
-#endif
-            Paramater = paramater;
-        }
-
-        /// <summary>
-        /// Creates a new Task with a parameter
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="paramater"></param>
-        /// <param name="mode"></param>
-        public UnityTask(Delegate action, object paramater, TaskStrategy mode)
-            : this()
-        {
-            if (mode == TaskStrategy.Coroutine)
-                throw new ArgumentException("Action tasks may not be coroutines");
-
-            _action2 = action;
-            Strategy = mode;
-            Paramater = paramater;
-        }
-
         #endregion
 
         #region Private
@@ -306,15 +236,12 @@ namespace Foundation.Tasks
         {
             try
             {
-                if (_action2 != null)
-                {
-                    _action2.DynamicInvoke(Paramater);
-                }
-                else if (_action != null)
+                if (_action != null)
                 {
                     _action();
                 }
                 Status = TaskStatus.Success;
+                OnTaskComplete();
             }
             catch (Exception ex)
             {
@@ -325,10 +252,10 @@ namespace Foundation.Tasks
                     Debug.LogException(ex);
             }
         }
+
+
+
 #if !UNITY_WEBGL
-        /// <summary>
-        /// Executes the task in background thread
-        /// </summary>
 #if UNITY_WSA
         protected async void RunOnBackgroundThread()
         {
@@ -337,27 +264,21 @@ namespace Foundation.Tasks
 #else
         protected void RunOnBackgroundThread()
         {
-            Status = TaskStatus.Running;
+            Status = TaskStatus.Pending;
             ThreadPool.QueueUserWorkItem(state => Execute());
 #endif
         }
 #endif
 
-        /// <summary>
-        /// Executes the task in background thread
-        /// </summary>
         protected void RunOnCurrentThread()
         {
-            Status = TaskStatus.Running;
+            Status = TaskStatus.Pending;
             Execute();
         }
 
-        /// <summary>
-        /// Executes the task on the main thread
-        /// </summary>
         protected void RunOnMainThread()
         {
-            Status = TaskStatus.Running;
+            Status = TaskStatus.Pending;
 #if UNITY_WEBGL
             Execute();
 #else
@@ -365,12 +286,9 @@ namespace Foundation.Tasks
 #endif
         }
 
-        /// <summary>
-        /// Executes the task in a coroutine
-        /// </summary>
         protected void RunAsCoroutine()
         {
-            Status = TaskStatus.Running;
+            Status = TaskStatus.Pending;
 
             TaskManager.StartRoutine(new TaskManager.CoroutineCommand
             {
@@ -381,33 +299,48 @@ namespace Foundation.Tasks
 
         protected virtual void OnTaskComplete()
         {
-            foreach (var d in CompleteList)
+            if (_completeList != null)
             {
-                if (d != null)
-                    d.DynamicInvoke(this);
-            }
-            CompleteList.Clear();
-
-            if (IsSuccess)
-            {
-                foreach (var d in SuccessList)
+                foreach (var d in _completeList)
                 {
                     if (d != null)
-                        d.DynamicInvoke();
+                        d.DynamicInvoke(this);
                 }
+                _completeList = null;
             }
-            SuccessList.Clear();
+            HasContinuations = false;
         }
 
         protected void OnRoutineComplete()
         {
-            if (Status == TaskStatus.Running || Status == TaskStatus.Created)
+            if (Status == TaskStatus.Pending)
+            {
                 Status = TaskStatus.Success;
+                OnTaskComplete();
+            }
         }
 
         #endregion
 
         #region public methods
+
+        /// <summary>
+        /// Runs complete logic, for custom tasks
+        /// </summary>
+        public void Complete(Exception ex = null)
+        {
+            if (ex == null)
+            {
+                Status = TaskStatus.Success;
+                OnTaskComplete();
+            }
+            else
+            {
+                Exception = ex;
+                Status = TaskStatus.Faulted;
+                OnTaskComplete();
+            }
+        }
 
         /// <summary>
         /// Executes the task
@@ -446,21 +379,6 @@ namespace Foundation.Tasks
             }
         }
 
-        /// <summary>
-        /// will throw if faulted
-        /// </summary>
-        /// <returns></returns>
-        public UnityTask ThrowIfFaulted()
-        {
-            if (IsFaulted)
-                throw Exception;
-            return this;
-        }
-
-        /// <summary>
-        /// Thread.Sleep
-        /// </summary>
-        /// <param name="millisecondTimeout"></param>
 #if UNITY_WSA
         public async static System.Threading.Tasks.Task Delay(int millisecondTimeout)
         {
@@ -480,106 +398,23 @@ namespace Foundation.Tasks
 
         public virtual void Dispose()
         {
-            Status = TaskStatus.Created;
-            Paramater = null;
+            Status = TaskStatus.Pending;
             Exception = null;
             _action = null;
-            _action2 = null;
             _routine = null;
-            CompleteList.Clear();
-            SuccessList.Clear();
+            _completeList = null;
+            HasContinuations = false;
         }
 
-        #endregion
-
-        #region wait
-        /// <summary>
-        /// Wait for the task to complete in an iterator coroutine
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator WaitRoutine()
+        public void AddContinue(Delegate action)
         {
-            while (IsRunning || CompleteList.Count > 0)
+            HasContinuations = true;
+            if (_completeList == null)
             {
-                yield return 1;
-            }
-        }
-
-        /// <summary>
-        /// Waits for the task to complete
-        /// </summary>
-        public UnityTask Wait()
-        {
-            if (TaskManager.IsMainThread && !DisableMultiThread)
-            {
-                Debug.LogWarning("Use WaitRoutine in coroutine to wait in main thread");
+                _completeList = new List<Delegate>();
             }
 
-            Delay(10);
-
-            while (IsRunning || CompleteList.Count > 0)
-            {
-                Delay(10);
-            }
-
-            return this;
-        }
-        #endregion
-
-        #region continue with
-        /// <summary>
-        /// Called after the task is complete
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public UnityTask ContinueWith(Action<UnityTask> action)
-        {
-            if (IsCompleted)
-            {
-                action(this);
-            }
-            else
-            {
-                CompleteList.Add(action);
-            }
-            return this;
-        } 
-        
-        /// <summary>
-        /// Called after the task is complete
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public K ContinueWith<K>(Action<K> action) where K : UnityTask
-        {
-            if (IsCompleted)
-            {
-                action((K)this);
-            }
-            else
-            {
-                CompleteList.Add(action);
-            }
-            return (K)this;
-        }
-
-        /// <summary>
-        /// Called after a successful task execution
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public UnityTask OnSuccess(Action action)
-        {
-            if (IsCompleted && IsSuccess)
-            {
-                action();
-            }
-            else
-            {
-                SuccessList.Add(action);
-            }
-
-            return this;
+            _completeList.Add(action);
         }
         #endregion
     }

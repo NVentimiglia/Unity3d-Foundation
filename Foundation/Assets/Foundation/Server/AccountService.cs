@@ -6,81 +6,74 @@
 //  -------------------------------------
 
 using System;
+using System.Net;
+using Facebook.Unity;
 using Foundation.Server.Api;
 using Foundation.Tasks;
 using FullSerializer;
 using UnityEngine;
 
-namespace Assets.Foundation.Server
+namespace Foundation.Server
 {
     /// <summary>
     /// Static service for communicating with the Accounts / Authentication Service
     /// </summary>
-    public class AccountService
+    public class AccountService : ServiceClientBase
     {
         #region Static
+
         public static readonly AccountService Instance = new AccountService();
-        public const string PrefKey = "CloudAccount";
+        public const string PrefKey = "Account:Profile";
+        public const string FBPrefKey = "Account:FB";
+
+        AccountService() : base("Account")
+        {
+            Load();
+
+            FB.Init(() =>
+            {
+                Debug.Log("FB.Init completed: Is user logged in? " + FB.IsLoggedIn);
+            },
+             isGameShown =>
+             {
+                 FBHideState = isGameShown;
+                 OnFBHideState(isGameShown);
+             });
+        }
 
         #endregion
 
         #region props
-        
-        /// <summary>
-        /// Unique Id (GUID) for Account
-        /// </summary>
-        public string Id { get; protected set; }
 
         /// <summary>
-        /// User's Email
+        /// Current User Account
         /// </summary>
-        public string Email { get; protected set; }
+        public AccountDetails Account { get; protected set; }
 
         /// <summary>
-        /// User's Email
+        /// FB Token
         /// </summary>
-        public string FacebookId { get; protected set; }
+        public AccessToken FBToken { get; protected set; }
 
         /// <summary>
-        /// Key used to acquire the session server side. Add to header.
+        /// Raised by FB
         /// </summary>
-        public string SessionToken { get; set; }
+        public bool FBHideState { get; protected set; }
 
         /// <summary>
-        /// Key used to acquire the session server side. Add to header.
+        /// Raised by FB
         /// </summary>
-        public string AuthorizationToken { get; set; }
-
-        /// <summary>
-        /// Has a Session
-        /// </summary>
-        public bool IsAuthenticated { get; protected set; }
-
-        /// <summary>
-        /// Unique Id for this application instance
-        /// </summary>
-        public static readonly string ClientId = Guid.NewGuid().ToString();
+        public event Action<bool> OnFBHideState = delegate { };
 
         #endregion
 
         #region private Methods
-        
-        public readonly ServiceClient ServiceClient = new ServiceClient("Account");
 
         void ReadDetails(AccountDetails model)
         {
-            if (model != null)
-            {
-                IsAuthenticated = model.IsAuthenticated;
-                AuthorizationToken = model.AuthorizationToken;
-                SessionToken = model.SessionToken;
-                Email = model.Email;
-                FacebookId = model.FacebookId;
-                Save();
-
-            }
+            Account = model;
+            Save();
         }
-
 
         /// <summary>
         /// Loads session from prefs
@@ -90,13 +83,19 @@ namespace Assets.Foundation.Server
         {
             if (PlayerPrefs.HasKey(PrefKey))
             {
-                var model = JsonSerializer.Deserialize<AccountService>(PlayerPrefs.GetString(PrefKey));
+                Account = JsonSerializer.Deserialize<AccountDetails>(PlayerPrefs.GetString(PrefKey));
+            }
+            else
+            {
+                Account = new AccountDetails
+                {
+                    Id = Guid.NewGuid().ToString()
+                };
+            }
 
-                IsAuthenticated = model.IsAuthenticated;
-                AuthorizationToken = model.AuthorizationToken;
-                SessionToken = model.SessionToken;
-                Email = model.Email;
-                FacebookId = model.FacebookId;
+            if (PlayerPrefs.HasKey(FBPrefKey))
+            {
+                FBToken = JsonSerializer.Deserialize<AccessToken>(PlayerPrefs.GetString(FBPrefKey));
             }
         }
 
@@ -105,10 +104,13 @@ namespace Assets.Foundation.Server
         /// </summary>
         public void Save()
         {
-            var json = JsonSerializer.Serialize(this);
+            var json = JsonSerializer.Serialize(Account);
             PlayerPrefs.SetString(PrefKey, json);
-            PlayerPrefs.Save();
 
+            var json2 = JsonSerializer.Serialize(FBToken);
+            PlayerPrefs.SetString(FBPrefKey, json2);
+
+            PlayerPrefs.Save();
         }
 
         #endregion
@@ -116,35 +118,32 @@ namespace Assets.Foundation.Server
         #region public methods
 
         /// <summary>
-        /// SignIn from cache (remember me)
+        /// Hit server, get up to date account profile
         /// </summary>
         /// <returns>true if authenticated</returns>
-        public UnityTask SignIn()
+        public UnityTask Get()
         {
-            Load();
-
-            //Signed in fine
-            if(IsAuthenticated)
-                return UnityTask.SuccessTask();
-
-            //Not signed in, but no error.
-            if(string.IsNullOrEmpty(Id))
-                return UnityTask.SuccessTask();
-
-            //Try load guest account
-            var task = ServiceClient.Post<AccountDetails>("Guest", new AccountGuestRequest
+            if (IsAuthenticated)
             {
-                UserId = Id,
-
-            }).AsTask().ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
+                //Refresh
+                return HttpPost<AccountDetails>("Get")
+                .ContinueWith(o =>
                 {
-                    ReadDetails(o.Result);
-                }
-            });
+                    //reload details
+                    if (o.IsSuccess && o.Result != null)
+                    {
+                        ReadDetails(o.Result);
+                    }
+                    else if (o.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        //
+                        SignOut();
+                    }
+                });
+            }
 
-            return task;
+            return Guest();
+
         }
 
         /// <summary>
@@ -152,8 +151,14 @@ namespace Assets.Foundation.Server
         /// </summary>
         public void SignOut()
         {
-            IsAuthenticated = false;
-            Id = FacebookId = Email = SessionToken = AuthorizationToken = string.Empty;
+            HttpService.ClearSession();
+            HttpService.SaveSession();
+
+            Account = new AccountDetails
+            {
+                Id = Guid.NewGuid().ToString()
+            };
+
             Save();
         }
 
@@ -163,25 +168,52 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public UnityTask Guest()
         {
-            IsAuthenticated = false;
-            Id = Guid.NewGuid().ToString();
-            Id = FacebookId = Email = SessionToken = AuthorizationToken = string.Empty;
-            Save();
-
-            var task = ServiceClient.Post<AccountDetails>("Guest", new AccountGuestRequest
+            // Is Authenticated
+            if (IsAuthenticated)
             {
-                UserId = Id,
+                if (Application.internetReachability == NetworkReachability.NotReachable)
+                    return UnityTask.SuccessTask();
 
-            }).AsTask().ContinueWith(o =>
+                //Refresh
+                return HttpPost<AccountDetails>("Get")
+                    .ContinueWith(o =>
+                    {
+                        //reload details
+                        if (o.IsSuccess && o.Result != null)
+                        {
+                            ReadDetails(o.Result);
+                        }
+                    });
+            }
+
+
+            //No Internet ? 
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+                return UnityTask.SuccessTask();
+            
+            //Save serverside in background
+            var task = HttpPost<AccountDetails>("Guest", new AccountGuestSignIn
+            {
+                UserId = Account.Id,
+            })
+            .ContinueWith(o =>
             {
                 if (o.IsSuccess && o.Result != null)
                 {
                     ReadDetails(o.Result);
                 }
+                else
+                {
+                    // Reboot local id
+                    Account = new AccountDetails
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    };
+
+                }
             });
             return task;
         }
-
 
         /// <summary>
         /// Sign in request
@@ -191,11 +223,11 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public UnityTask SignIn(string email, string password)
         {
-            var task = ServiceClient.Post<AccountDetails>("SignIn", new AccountEmailRequest
+            var task = HttpPost<AccountDetails>("SignIn", new AccountEmailSignIn
             {
                 Email = email,
                 Password = password,
-                UserId = Id,
+                UserId = Account.Id,
             }).ContinueWith(o =>
             {
                 if (o.IsSuccess && o.Result != null)
@@ -214,10 +246,13 @@ namespace Assets.Foundation.Server
         /// <returns></returns>
         public UnityTask Update(string email, string password)
         {
-            var task = ServiceClient.Post<AccountDetails>("Update", new AccountEmailUpdateRequest
+            if (!IsAuthenticated)
+                return UnityTask.FailedTask("Not authenticated");
+
+            var task = HttpPost<AccountDetails>("Update", new AccountEmailUpdate
             {
-                Email = email,
-                Password = password,
+                NewEmail = email,
+                NewPassword = password,
             }).ContinueWith(o =>
             {
                 if (o.IsSuccess && o.Result != null)
@@ -233,33 +268,11 @@ namespace Assets.Foundation.Server
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        public UnityTask Recovery(string email)
+        public UnityTask Reset(string email)
         {
-            var task = ServiceClient.Post<AccountDetails>("Recovery", new AccountRecoverRequest
+            var task = HttpPost<AccountDetails>("Reset", new AccountEmailReset
             {
                 Email = email
-            }).ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
-                {
-                    ReadDetails(o.Result);
-                }
-            });
-            return task;
-        }
-
-        /// <summary>
-        /// Updates the account with a new password. Token from Recovery Email.
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public UnityTask Reset(string token, string password)
-        {
-            var task = ServiceClient.Post<AccountDetails>("Reset", new AccountEmailResetRequest
-            {
-                Password = password,
-                Token = token
             }).ContinueWith(o =>
             {
                 if (o.IsSuccess && o.Result != null)
@@ -273,16 +286,16 @@ namespace Assets.Foundation.Server
         /// <summary>
         /// Deletes the current account
         /// </summary>
-        /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public UnityTask Delete(string email, string password)
+        public UnityTask Delete(string password)
         {
-            var task = ServiceClient.Post<AccountDetails>("Delete", new AccountEmailDeleteRequest
+            if (!IsAuthenticated)
+                return UnityTask.FailedTask("Not authenticated");
+
+            var task = HttpPost<AccountDetails>("Delete", new AccountEmailDelete
             {
                 Password = password,
-                UserId = Id,
-                Email = email
             }).ContinueWith(o =>
             {
                 if (o.IsSuccess)
@@ -296,25 +309,27 @@ namespace Assets.Foundation.Server
 
         #region facebook
 
+
+
         /// <summary>
         /// Sign in request
         /// </summary>
         /// <param name="provider"></param>
         /// <param name="accessToken"></param>
         /// <returns></returns>
-        public UnityTask SocialConnect(string accessToken, string provider = "Facebook")
+        public UnityTask FacebookConnect(AccessToken token)
         {
-            var task = ServiceClient.Post<AccountDetails>("Facebook", new AccountFacebookRequest
+            var task = HttpPost<AccountDetails>("FacebookConnect", new AccountFacebookConnect
             {
-                AccessToken = accessToken,
-
+                AccessToken = token.TokenString,
             }).ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
-                {
-                    ReadDetails(o.Result);
-                }
-            });
+           {
+               if (o.IsSuccess && o.Result != null)
+               {
+                   FBToken = token;
+                   ReadDetails(o.Result);
+               }
+           });
             return task;
         }
 
@@ -324,9 +339,12 @@ namespace Assets.Foundation.Server
         /// </summary>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public UnityTask SocialDisconnect(string provider = "Facebook")
+        public UnityTask FacebookDisconnect()
         {
-            var task = ServiceClient.Post<AccountDetails>("FacebookDelete", new AccountFacebookDeleteRequest())
+            if(!IsAuthenticated)
+                return UnityTask.FailedTask("Not authenticated");
+
+            var task = HttpPost<AccountDetails>("FacebookDisconnect", new AccountFacebookDisconnect())
             .ContinueWith(o =>
             {
                 if (o.IsSuccess && o.Result != null)

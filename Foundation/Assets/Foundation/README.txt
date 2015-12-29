@@ -1,27 +1,31 @@
+# Unity3d-Foundation
+
+This library for Unity3d is a starter framework with common application level services.
+
 https://github.com/NVentimiglia/Unity3d-Foundation/wiki
 
-Unity3d-Foundation
-Databinding, MVVM, Tasks, Localization, Messenger, IOC, and WebApi Client for Unity3d
+## Features
 
-Bringing modern Microsoft development practices to Unity3d. 
-If you are a Xamarin or WPF developer you might be wondering where the MVVM, databinding, and TPL tools for Unity3d are.
-They are here. This toolkit bridges the game letting you build higher quality code faster.
+- Modular design, choose what parts you want
 
-If you like this toolkit and want to see a high quality example of the outcome, please support my development by 
-purchasing my premium asset on the asset store. It not only includes a slick, animated UI, but, a complete WebApi back end for support player data.
+- Databinding and Observables with full support for uGUI. 
+  - Full support for UGUI
+  - Full support for the MVVM pattern
 
-Download Package
+- Task library for dispatching work into the background or foreground
 
-Unity3d Foundation Premium
+- Localization supports CSV format and dynamic translation
 
-Features
+- Service layer with complete ASP.NET MVC Server
+  - Supports serverside session
+  - Supports authentication and account services
+  - Email for welcomes and password resets
+  - Storage table for untyped write-as-you-go objects
+  - Fully customizable with your own date objects
 
-Modular design, choose what parts you want
-Databinding fully supports uGUI
-Mvvm (model-view-viewmodel) supports standard INotifyPropertyChange.
-UnityTasks supports running in the background or as coroutines
-Localization supports CSV format and dynamic translation
-Wiki documentation
-Platforms
+- Realtime integration
+  - scalable websocket networking solution
+  - Cloud managed (no servers to setup)
+  - Lobby and room system
+  - Cost effective and easy to use
 
-Desktop, Webplayer, Android, iOS, Windows Store

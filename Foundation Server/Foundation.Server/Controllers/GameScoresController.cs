@@ -17,6 +17,7 @@ namespace Foundation.Server.Controllers
     {
         [HttpPost]
         [Route("api/Scores/Get")]
+        [AllowAnonymous]
         public async Task<IEnumerable<GameScore>> Get(int take = 10, int skip = 0)
         {
             // Select Data

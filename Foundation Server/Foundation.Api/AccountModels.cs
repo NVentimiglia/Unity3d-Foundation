@@ -9,19 +9,32 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Foundation.Server.Api
 {
+    #region guest auth
+
+    /// <summary>
+    /// Sign in using the device id as a key. Guest mode.
+    /// </summary>
+    public class AccountGuestSignIn
+    {
+        /// <summary>
+        /// Unique Id for the user.
+        /// </summary>
+        [Required]
+        public string UserId { get; set; }
+    }
+    #endregion
+
     #region email auth
     /// <summary>
     /// Sign In / Sign Up
     /// </summary>
-    public class AccountEmailRequest
+    public class AccountEmailSignIn
     {
         /// <summary>
-        /// Unique Id for the user.
-        /// This can be App:UserName or just a Guid.
+        /// Unique Id (GUID)
         /// </summary>
-        [Required]
         public string UserId { get; set; }
-        
+
         /// <summary>
         /// Email
         /// </summary>
@@ -41,54 +54,29 @@ namespace Foundation.Server.Api
     /// <summary>
     /// 'I lost my password' request
     /// </summary>
-    public class AccountEmailResetRequest
+    public class AccountEmailReset
     {
-        /// <summary>
-        /// Personal Details (Updated)
-        /// </summary>
         [Required]
-        public string Token { get; set; }
-
-        /// <summary>
-        /// Personal Details (Updated)
-        /// </summary>
-        [Required]
-        public string Password { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
     }
 
     /// <summary>
     /// Updates an account's details
     /// </summary>
-    public class AccountEmailUpdateRequest
+    public class AccountEmailUpdate
     {
-        /// <summary>
-        /// Personal Details (Updated)
-        /// </summary>
-        public string Email { get; set; }
+        [EmailAddress]
+        public string NewEmail { get; set; }
 
-        /// <summary>
-        /// Personal Details (Updated)
-        /// </summary>
-        public string Password { get; set; }
+        public string NewPassword { get; set; }
     }
 
     /// <summary>
     /// Removes Email claim. will cause account delete.
     /// </summary>
-    public class AccountEmailDeleteRequest
+    public class AccountEmailDelete
     {
-        /// <summary>
-        /// User's unique id
-        /// </summary>
-        [Required]
-        public string UserId { get; set; }
-
-        /// <summary>
-        /// Personal Details (Updated)
-        /// </summary>
-        [Required]
-        public string Email { get; set; }
-
         /// <summary>
         /// Personal Details (Updated)
         /// </summary>
@@ -96,41 +84,76 @@ namespace Foundation.Server.Api
         public string Password { get; set; }
     }
 
-    /// <summary>
-    /// Issues a Token as needed for Update
-    /// </summary>
-    public class AccountRecoverRequest
-    {
-        /// <summary>
-        /// User's email
-        /// </summary>
-        [Required]
-        public string Email { get; set; }
-    }
     #endregion
-    
-    #region guest auth
+
+    #region twilio auth
+    /// <summary>
+    /// Sign In / Sign Up
+    /// </summary>
+    public class AccountTwilioSignIn
+    {
+        public string UserId { get; set; }
+
+        [Required]
+        [Phone]
+        public string Phone { get; set; }
+
+        [Required]
+        [MinLength(5)]
+        public string Password { get; set; }
+    }
+
 
     /// <summary>
-    /// Sign in using the device id as a key. Guest mode.
+    /// 'I lost my password' request
     /// </summary>
-    public class AccountGuestRequest
+    public class AccountTwilioReset
     {
-        /// <summary>
-        /// Unique Id for the user.
-        /// </summary>
+        [Required]
+        [Phone]
+        public string Phone { get; set; }
+    }
+
+    /// <summary>
+    /// Updates an account's details
+    /// </summary>
+    public class AccountTwilioUpdate
+    {
         [Required]
         public string UserId { get; set; }
-        }
-    
+        
+        [Phone]
+        [Required]
+        public string Phone { get; set; }
+        
+        [Required]
+        public string Password { get; set; }
+    }
+
+    /// <summary>
+    /// Removes phone claim. will cause account delete.
+    /// </summary>
+    public class AccountTwilioDelete
+    {
+        [Required]
+        public string UserId { get; set; }
+
+        [Required]
+        [Phone]
+        public string Phone { get; set; }
+        
+        [Required]
+        [Phone]
+        public string Password { get; set; }
+    }
 
     #endregion
-
+    
     #region fb auth
     /// <summary>
     /// Social Sign In
     /// </summary>
-    public class AccountFacebookRequest
+    public class AccountFacebookConnect
     {
         /// <summary>
         /// Provider password
@@ -142,13 +165,13 @@ namespace Foundation.Server.Api
     /// <summary>
     /// Removes Facebook claim. 
     /// </summary>
-    public class AccountFacebookDeleteRequest
+    public class AccountFacebookDisconnect
     {
 
     }
 
     #endregion
-    
+
     /// <summary>
     /// Describes the user Account
     /// </summary>
@@ -158,36 +181,20 @@ namespace Foundation.Server.Api
         /// Unique Id (GUID)
         /// </summary>
         public string Id { get; set; }
+
         /// <summary>
         /// User's Email
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// User's Phone (Twilio)
+        /// </summary>
+        public string Phone { get; set; }
+
         /// <summary>
         /// User's Email
         /// </summary>
         public string FacebookId { get; set; }
-
-        /// <summary>
-        /// Serverside's authorization cookie (header token)
-        /// </summary>
-        public string AuthorizationToken { get; set; }
-        /// <summary>
-        /// Serverside's session cookie (header token)
-        /// </summary>
-        public string SessionToken { get; set; }
-
-        /// <summary>
-        /// Is Authenticated
-        /// </summary>
-        public bool IsAuthenticated { get; set; }
-    }
-
-
-    public class AccountConstants
-    {
-        public static string APPLICATIONID = "APPLICATIONID";
-        public static string SESSION = "SESSION";
-        public static string AUTHORIZATION = "AUTHORIZATION";
-        public static string FACEBOOK = "facebook";
     }
 }

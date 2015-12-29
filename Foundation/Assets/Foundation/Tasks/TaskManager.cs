@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Foundation.Tasks
 {
     /// <summary>
@@ -134,7 +135,7 @@ namespace Foundation.Tasks
             }
             else
             {
-                Instance.StopCoroutine(Instance.RunCoroutineInfo(info));
+                Instance.StartCoroutine(Instance.RunCoroutineInfo(info));
             }
         }
 
@@ -156,7 +157,7 @@ namespace Foundation.Tasks
             }
             else
             {
-                Instance.StartCoroutine(coroutine);
+                Instance.StopCoroutine(coroutine);
             }
         }
 

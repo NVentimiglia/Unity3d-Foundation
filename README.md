@@ -1,31 +1,28 @@
 # Unity3d-Foundation
-Databinding, MVVM, Tasks, Localization, Messenger, IOC, and WebApi Client for Unity3d
 
-Bringing modern Microsoft development practices to Unity3d. If you are a Xamarin or WPF developer you might be wondering where the MVVM, databinding, and TPL tools for Unity3d are. They are here. 
+This is a starter framework with common application services for building quality data driven games.
 
-If you like this toolkit and want to see a high quality example of what you can make with it, please support my development by purchasing my premium asset on the asset store. It not only includes a slick, animated UI, but, a complete WebApi back end for support player data.
+### Key Features
 
-**[Download Free Package](https://github.com/NVentimiglia/Unity3d-Foundation/raw/master/Foundation-2015-9-11.unitypackage)**
-
-**[Unity3d Foundation Premium](http://unity3dfoundation.com)**
-
-## Features
-
-- Modular design, choose what parts you want
-- Databinding fully supports uGUI with custom editor inspectors
-- Databinding supports interfaces, structs, pocos, and monobehaviours
-- Mvvm (model-view-viewmodel) supports standard INotifyPropertyChange
-- Generic messenger, game-object messenger, and inversion of control componenets
-- UnityTasks supports running in the background or as coroutines
-- Localization supports CSV format and dynamic  translation
-- [Wiki documentation](https://github.com/NVentimiglia/Unity3d-Foundation/wiki)
-
+- [Full c# webserver. Modern WebApi hostable on Azure.](http://www.asp.net/web-api)
+- Webserver supports authentication, emails, facebook, and databases
+- Databinding, observable, and MVVM support for uGUI
+- Localization in 14 languages with automatic translation
+- Realtime SDK included : The cloud hosted networking solution
+- Task library, Message Center, Inversion of Control, and a bunch more
+ 
 ## Platforms
 Desktop, Webplayer, Android, iOS, Windows Store
 
+## More
 
-## Dependencies
-[FullSerializer](https://github.com/jacobdufault/fullserializer) Json Library
+**[Free Package](https://github.com/NVentimiglia/Unity3d-Foundation/raw/master/Unity3dFoundation.unitypackage)**
+
+**[Pro Package](http://unity3dfoundation.com)**
+
+
+**[Documentation](https://github.com/NVentimiglia/Unity3d-Foundation/wiki)**
+
 
 ## License
 [MIT License](https://github.com/NVentimiglia/Unity3d-Foundation/blob/master/README.md)

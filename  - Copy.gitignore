@@ -12,6 +12,9 @@ UnityVS/
 *.pidb
 *.booproj
 
+# Unity3D generated meta files
+*.pidb.meta
+
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
@@ -45,10 +48,16 @@ packages/
 *.VisualState.xml
 TestResult.xml
 
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
 *_i.c
 *_p.c
 *_i.h
 *.ilk
+*.meta
 *.obj
 *.pch
 *.pdb

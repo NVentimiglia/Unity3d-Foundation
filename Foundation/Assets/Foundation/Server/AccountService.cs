@@ -6,11 +6,13 @@
 //  -------------------------------------
 
 using System;
+using System.Collections;
 using System.Net;
 using Facebook.Unity;
 using Foundation.Server.Api;
 using Foundation.Tasks;
 using FullSerializer;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Foundation.Server
@@ -190,7 +192,7 @@ namespace Foundation.Server
             //No Internet ? 
             if (Application.internetReachability == NetworkReachability.NotReachable)
                 return UnityTask.SuccessTask();
-            
+
             //Save serverside in background
             var task = HttpPost<AccountDetails>("Guest", new AccountGuestSignIn
             {
@@ -309,6 +311,32 @@ namespace Foundation.Server
 
         #region facebook
 
+        public UnityTask FacebookConnect()
+        {
+            var task = new UnityTask { Strategy = TaskStrategy.Custom };
+            FB.LogInWithPublishPermissions(new[] { "public_profile", "user_friends", "user_birthday", "user_email" }, result =>
+             {
+                 if (!string.IsNullOrEmpty(result.Error))
+                 {
+                     task.Complete(new Exception(result.Error));
+                 }
+                 else
+                 {
+                     FacebookConnect(result.AccessToken).ContinueWith(inner =>
+                     {
+                         if (inner.IsFaulted)
+                         {
+                             task.Complete(inner.Exception);
+                         }
+                         else
+                         {
+                             task.Complete();
+                         }
+                     });
+                 }
+             });
+            return task;
+        }
 
 
         /// <summary>
@@ -341,7 +369,7 @@ namespace Foundation.Server
         /// <returns></returns>
         public UnityTask FacebookDisconnect()
         {
-            if(!IsAuthenticated)
+            if (!IsAuthenticated)
                 return UnityTask.FailedTask("Not authenticated");
 
             var task = HttpPost<AccountDetails>("FacebookDisconnect", new AccountFacebookDisconnect())

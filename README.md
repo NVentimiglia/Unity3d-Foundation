@@ -12,7 +12,7 @@ This is a starter framework with common application services for building qualit
 - Task library, Message Center, Inversion of Control, and a bunch more
  
 ## Platforms
-Desktop, Webplayer, Android, iOS, Windows Store
+Desktop, Webplayer, WebGL, Android, iOS, Windows Store
 
 ## More
 

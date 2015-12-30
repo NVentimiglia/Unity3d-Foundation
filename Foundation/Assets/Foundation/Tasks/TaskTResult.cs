@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -22,7 +21,7 @@ namespace Foundation.Tasks
     ///        Debug.Log("Slept");
     ///    });
     ///    // wait for it
-    ///    yield return StartCoroutine(task.WaitRoutine());
+    ///    yield return task;
     ///
     ///    // check exceptions
     ///    if(task.IsFaulted)

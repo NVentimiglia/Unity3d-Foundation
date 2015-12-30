@@ -74,7 +74,7 @@ namespace Foundation.Tasks
     ///        Debug.Log("Slept");
     ///    });
     ///    // wait for it
-    ///    yield return StartCoroutine(task.WaitRoutine());
+    ///    yield return task;
     ///
     ///    // check exceptions
     ///    if(task.IsFaulted)
@@ -105,12 +105,12 @@ namespace Foundation.Tasks
         /// <summary>
         /// Error
         /// </summary>
-        public Exception Exception { get; protected set; }
+        public Exception Exception { get; set; }
 
         /// <summary>
         /// Run State
         /// </summary>
-        public TaskStatus Status { get; protected set; }
+        public TaskStatus Status { get; set; }
 
         /// <summary>
         /// Custom Yield
@@ -331,6 +331,7 @@ namespace Foundation.Tasks
         {
             if (ex == null)
             {
+                ex = null;
                 Status = TaskStatus.Success;
                 OnTaskComplete();
             }
@@ -347,14 +348,13 @@ namespace Foundation.Tasks
         /// </summary>
         public void Start()
         {
-            if (IsCompleted)
-            {
-                return;
-            }
+            Status = TaskStatus.Pending;
 
             switch (Strategy)
             {
 
+                case TaskStrategy.Custom:
+                    break;
                 case TaskStrategy.Coroutine:
                     RunAsCoroutine();
                     break;

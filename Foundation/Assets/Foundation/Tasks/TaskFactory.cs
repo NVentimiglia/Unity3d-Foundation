@@ -19,7 +19,7 @@ namespace Foundation.Tasks
     ///        Debug.Log("Slept");
     ///    });
     ///    // wait for it
-    ///    yield return StartCoroutine(task.WaitRoutine());
+    ///    yield return task;
     ///
     ///    // check exceptions
     ///    if(task.IsFaulted)

@@ -1,11 +1,6 @@
-/Foundation Databinding/*.csproj
-/Foundation Databinding/*.sln
-/Foundation Databinding/*.userprefs
-
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
-[Bb]uild/
 UnityVS/
 
 
@@ -36,17 +31,11 @@ sysinfo.txt
 *.userprefs
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-build/
-bld/
 [Bb]in/
 [Oo]bj/
 packages/
+[Bb]uilds/
+[Bb]uild/
 
 # Visual Studo 2015 cache/options directory
 .vs/
@@ -105,73 +94,28 @@ ipch/
 *.vsp
 *.vspx
 
-# TFS 2012 Local Workspace
-$tf/
-
-# Guidance Automation Toolkit
-*.gpState
-
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
-# JustCode is a .NET coding addin-in
-.JustCode
-
-# TeamCity is a build add-in
-_TeamCity*
-
-# DotCover is a Code Coverage Tool
-*.dotCover
-
-# NCrunch
-_NCrunch_*
-.*crunch*.local.xml
-
-# MightyMoose
-*.mm.*
-AutoTest.Net/
-
-# Web workbench (sass)
-.sass-cache/
-
-# Installshield output folder
-[Ee]xpress/
-
-# DocProject is a documentation generator add-in
-DocProject/buildhelp/
-DocProject/Help/*.HxT
-DocProject/Help/*.HxC
-DocProject/Help/*.hhc
-DocProject/Help/*.hhk
-DocProject/Help/*.hhp
-DocProject/Help/Html2
-DocProject/Help/html
-
-# Click-Once directory
-publish/
-
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# TODO: Comment the next line if you want to checkin your web deploy settings 
-# but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
 *.publishproj
 
 # NuGet Packages
 *.nupkg
+
 # The packages folder can be ignored because of Package Restore
 **/packages/*
+
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
+
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/packages/repositories.config
-
-# Windows Azure Build Output
-csx/
-*.build.csdef
 
 # Windows Store app package directory
 AppPackages/
@@ -188,9 +132,6 @@ ClientBin/
 *.publishsettings
 node_modules/
 bower_components/
-
-# RIA/Silverlight projects
-Generated_Code/
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,

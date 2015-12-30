@@ -188,10 +188,18 @@ namespace Foundation.Server
                     });
             }
 
+            if (Account == null || string.IsNullOrEmpty(Account.Id))
+            {
+                Account = new AccountDetails { Id = Guid.NewGuid().ToString() };
+            }
+
 
             //No Internet ? 
             if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                Debug.LogWarning("Not signed in, no internet.");
                 return UnityTask.SuccessTask();
+            }
 
             //Save serverside in background
             var task = HttpPost<AccountDetails>("Guest", new AccountGuestSignIn
@@ -206,12 +214,7 @@ namespace Foundation.Server
                 }
                 else
                 {
-                    // Reboot local id
-                    Account = new AccountDetails
-                    {
-                        Id = Guid.NewGuid().ToString()
-                    };
-
+                    Debug.LogException(o.Exception);
                 }
             });
             return task;

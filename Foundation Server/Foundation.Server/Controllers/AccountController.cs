@@ -63,11 +63,20 @@ namespace Foundation.Server.Controllers
         {
             // Registered User
             if (await AppDatabase.Users.AnyAsync(o => o.Id == model.UserId && !string.IsNullOrEmpty(o.Email)))
-                return BadRequest("UserId is in use. Try password reset.");
+            {
+                model.UserId = Guid.NewGuid().ToString();
+            }
 
             //Custom SignIn
             Authorization.IsAuthenticated = true;
             Authorization.UserId = model.UserId;
+
+            Session.UserId = model.UserId;
+            Session.UpdatedOn = DateTime.UtcNow;
+
+            Authorization.UserId = model.UserId;
+            Authorization.IsAuthenticated = true;
+            Authorization.UpdatedOn = DateTime.UtcNow;
 
             return Ok(GetAccountDetails());
         }

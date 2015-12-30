@@ -44,7 +44,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo f | xcopy "$(TargetDir)Foundation.Server.Unity3d.dll" "$(SolutionDir)..\Foundation\Assets\Plugins\Foundation.Server.Unity3d.dll"  /D /Y</PostBuildEvent>
+    <PostBuildEvent>echo f | xcopy "$(TargetDir)Foundation.Server.Unity3d.dll" "$(SolutionDir)..\Foundation\Assets\Foundation\Plugins\Foundation.Server.Unity3d.dll"  /D /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

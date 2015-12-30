@@ -69,11 +69,11 @@
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FullSerializer - Unity">
-      <HintPath>Assets\Foundation\Plugins\FullSerializer - Unity.dll</HintPath>
-    </Reference>
     <Reference Include="Foundation.Server.Unity3d">
       <HintPath>Assets\Foundation\Plugins\Foundation.Server.Unity3d.dll</HintPath>
+    </Reference>
+    <Reference Include="FullSerializer - Unity">
+      <HintPath>Assets\Foundation\Plugins\FullSerializer - Unity.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +234,7 @@
     <Compile Include="Assets\Foundation\Example\ServerTests.cs" />
     <Compile Include="Assets\Foundation\Example\TaskTests.cs" />
     <Compile Include="Assets\Foundation\Extensions\CsvReader.cs" />
+    <Compile Include="Assets\Foundation\Extensions\EnumerableExt.cs" />
     <Compile Include="Assets\Foundation\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Assets\Foundation\Ioc\ExportAttribute.cs" />
     <Compile Include="Assets\Foundation\Ioc\ImportAttribute.cs" />

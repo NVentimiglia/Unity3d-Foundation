@@ -17,22 +17,22 @@ namespace Foundation.Editor
         [MenuItem("Tools/Foundation/Server Settings")]
         public static void ShowWindow()
         {
-            GetWindowWithRect<ServerEditorWindow>(new Rect(0, 0, 640, 200), false, "Cloud Settings");
+            GetWindowWithRect<ServerEditorWindow>(new Rect(0, 0, 640, 200), false, "Server Settings");
         }
 
         static void CreateSettings()
         {
-            var instance = Resources.Load<ServerConfig>("CloudConfig");
+            var instance = Resources.Load<ServerConfig>("ServerConfig");
             if (instance == null)
             {
-                Debug.Log("Cloud Config Created at Resources/CloudConfig.asset");
+                Debug.Log("Cloud Config Created at Resources/ServerConfig.asset");
 
                 var inst = CreateInstance<ServerConfig>();
 
                 if (!Directory.Exists(Application.dataPath + "/Resources"))
                     AssetDatabase.CreateFolder("Assets", "Resources");
 
-                AssetDatabase.CreateAsset(inst, "Assets/Resources/CloudConfig.asset");
+                AssetDatabase.CreateAsset(inst, "Assets/Resources/ServerConfig.asset");
 
                 AssetDatabase.SaveAssets();
             }
@@ -50,7 +50,7 @@ namespace Foundation.Editor
         
         void Documentation()
         {
-            Application.OpenURL("http://unity3dfoundation.com/Wiki");
+            Application.OpenURL("https://github.com/NVentimiglia/Unity3d-Foundation/wiki");
         }
         
         void OnGUI()
@@ -87,7 +87,7 @@ namespace Foundation.Editor
             {
 
                 Target.Key = "";
-                Target.Path = "http://unity3dfoundation.com";
+                Target.Path = "https://github.com/NVentimiglia/Unity3d-Foundation";
             }
             if (GUILayout.Button("Documentation"))
             {

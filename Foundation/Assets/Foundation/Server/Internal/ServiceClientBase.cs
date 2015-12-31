@@ -65,7 +65,7 @@ namespace Foundation.Server
         #endregion
 
         #region Public Method
-
+        
         /// <summary>
         /// Posts a get request against a IQueryable OData data source
         /// </summary>

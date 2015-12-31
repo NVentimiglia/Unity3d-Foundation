@@ -31,7 +31,7 @@ namespace Foundation.Server
         AccountService() : base("Account")
         {
             Load();
-
+#if !UNITY_STANDALONE || UNITY_EDITOR
             FB.Init(() =>
             {
                 Debug.Log("FB.Init completed: Is user logged in? " + FB.IsLoggedIn);
@@ -41,6 +41,7 @@ namespace Foundation.Server
                  FBHideState = isGameShown;
                  OnFBHideState(isGameShown);
              });
+#endif
         }
 
         #endregion
@@ -193,7 +194,6 @@ namespace Foundation.Server
                 Account = new AccountDetails { Id = Guid.NewGuid().ToString() };
             }
 
-
             //No Internet ? 
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
@@ -215,6 +215,12 @@ namespace Foundation.Server
                 else
                 {
                     Debug.LogException(o.Exception);
+
+                    //sign out
+                    HttpService.ClearSession();
+                    HttpService.SaveSession();
+                    //overwrite error, let user play unauthenticated
+                   o.Status = TaskStatus.Success;
                 }
             });
             return task;
@@ -252,7 +258,11 @@ namespace Foundation.Server
         public UnityTask Update(string email, string password)
         {
             if (!IsAuthenticated)
-                return UnityTask.FailedTask("Not authenticated");
+            {
+                // Happens if start as guest offline
+                // must sign in.
+                return SignIn(email, password);
+            }
 
             var task = HttpPost<AccountDetails>("Update", new AccountEmailUpdate
             {

@@ -7,6 +7,7 @@
 
 using System.Linq;
 using Foundation.Server.Api;
+using Foundation.Tasks;
 using FullSerializer;
 
 namespace Foundation.Server
@@ -26,6 +27,7 @@ namespace Foundation.Server
 
         #region Public Method
 
+        
         /// <summary>
         /// Reads a collection of objects which match a cloud query.
         /// </summary>
@@ -49,6 +51,7 @@ namespace Foundation.Server
         {
             if (!IsAuthenticated)
                 return HttpTask<T>.Failure("Not authenticated");
+            
 
             StorageMetadata.RegisterType<T>();
 

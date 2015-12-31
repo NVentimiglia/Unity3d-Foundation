@@ -327,11 +327,11 @@ namespace Foundation.Tasks
         /// <summary>
         /// Runs complete logic, for custom tasks
         /// </summary>
-        public void Complete(Exception ex = null)
+        public virtual void Complete(Exception ex = null)
         {
             if (ex == null)
             {
-                ex = null;
+                Exception = null;
                 Status = TaskStatus.Success;
                 OnTaskComplete();
             }
@@ -346,7 +346,7 @@ namespace Foundation.Tasks
         /// <summary>
         /// Executes the task
         /// </summary>
-        public void Start()
+        public virtual void Start()
         {
             Status = TaskStatus.Pending;
 

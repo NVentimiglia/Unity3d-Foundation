@@ -40,7 +40,7 @@ namespace Foundation.Server
 
         static ServerConfig Create()
         {
-            return Resources.Load<ServerConfig>("CloudConfig");
+            return Resources.Load<ServerConfig>("ServerConfig");
         }
 
     }

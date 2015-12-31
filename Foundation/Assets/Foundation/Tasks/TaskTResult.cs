@@ -124,6 +124,29 @@ namespace Foundation.Tasks
 
         #region protected methods
 
+        /// <summary>
+        /// Runs complete logic, for custom tasks
+        /// </summary>
+        public override void Complete(Exception ex = null)
+        {
+            Result = default(TResult);
+            base.Complete(ex);
+        }
+
+        /// <summary>
+        /// Runs complete logic, for custom tasks
+        /// </summary>
+        public void Complete(TResult result)
+        {
+            Result = result;
+            base.Complete();
+        }
+
+        public override void Start()
+        {
+            Result = default(TResult);
+            base.Start();
+        }
 
         protected override void Execute()
         {

@@ -59,8 +59,7 @@ namespace Foundation.Tasks
             return task;
         }
         #endregion
-
-
+        
         #region Coroutine
 
         /// <summary>
@@ -156,7 +155,7 @@ namespace Foundation.Tasks
         /// A default task in the success state
         /// </summary>
         static UnityTask _successTask = new UnityTask(TaskStrategy.Custom) { Status = TaskStatus.Success };
-
+        
         /// <summary>
         /// A default task in the success state
         /// </summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Facebook.Unity;
 using Foundation.Server;
+using Foundation.Server.Api;
 using Foundation.Tasks;
 using UnityEngine;
 
@@ -131,7 +132,7 @@ namespace Foundation.Example
             Debug.Log("SignIn...");
             yield return StartCoroutine(TaskAsync(account.SignIn(Email1, Password)));
             Debug.Log(string.Format("Account : {0} {1} {2}", account.IsAuthenticated, account.Account.Email, account.Account.Id));
-
+            
             // out
             Debug.Log("Delete...");
             yield return StartCoroutine(TaskAsync(account.Delete(Password)));
@@ -185,6 +186,8 @@ namespace Foundation.Example
             Debug.Log("Update...");
             yield return StartCoroutine(TaskAsync(account.Update(Email1, Password)));
             Debug.Log(string.Format("Account : {0} {1} {2}", account.IsAuthenticated, account.Account.Email, account.Account.Id));
+
+            Debug.Log("Done");
 
         }
 

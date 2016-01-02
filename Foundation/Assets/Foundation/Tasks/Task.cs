@@ -10,6 +10,8 @@ using System.Threading;
 
 namespace Foundation.Tasks
 {
+
+
     /// <summary>
     /// Describes the Tasks State
     /// </summary>
@@ -111,6 +113,11 @@ namespace Foundation.Tasks
         /// Run State
         /// </summary>
         public TaskStatus Status { get; set; }
+
+        /// <summary>
+        /// Bag for additional http meta data
+        /// </summary>
+        public HttpMetadata Metadata { get; set; }
 
         /// <summary>
         /// Custom Yield
@@ -323,6 +330,15 @@ namespace Foundation.Tasks
         #endregion
 
         #region public methods
+
+        /// <summary>
+        /// For HTTP
+        /// </summary>
+        /// <param name="json"></param>
+        public virtual void DeserializeResult(string json)
+        {
+            
+        } 
 
         /// <summary>
         /// Runs complete logic, for custom tasks

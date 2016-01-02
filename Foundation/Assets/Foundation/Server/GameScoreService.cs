@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using Foundation.Server.Api;
 using Foundation.Tasks;
-using UnityEngine;
 
 namespace Foundation.Server
 {
@@ -32,6 +31,55 @@ namespace Foundation.Server
         /// Gets the high score list
         /// </summary>
         /// <returns></returns>
+        public void Get(int take, int skip, Action<Response<GameScore[]>> callback)
+        {
+            var dto = new Dictionary<string, int>
+            {
+                {"take", take},
+                {"skip", skip}
+            };
+
+            HttpPostAsync("Get", dto, callback);
+        }
+
+        /// <summary>
+        /// Returns your current score
+        /// </summary>
+        /// <returns></returns>
+        public void Self(Action<Response<GameScore>> callback)
+        {
+            if (!IsAuthenticated)
+            {
+                callback(new Response<GameScore>(new Exception("Not authenticated")));
+                return;
+            }
+
+            HttpPostAsync("Self", callback);
+        }
+
+        /// <summary>
+        /// Posts the score to the server
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public void Update(GameScore entity, Action<Response> callback)
+        {
+            if (!IsAuthenticated)
+            {
+                callback(new Response(new Exception("Not authenticated")));
+                return;
+            }
+
+            HttpPostAsync("Update", entity, callback);
+        }
+
+        //
+
+        /// <summary>
+        /// Gets the high score list
+        /// </summary>
+        /// <returns></returns>
         public UnityTask<GameScore[]> Get(int take, int skip)
         {
             var dto = new Dictionary<string, int>
@@ -40,7 +88,7 @@ namespace Foundation.Server
                 {"skip", skip}
             };
 
-            return HttpPost<GameScore[]>("Get", dto);
+            return HttpPostAsync<GameScore[]>("Get", dto);
         }
 
         /// <summary>
@@ -52,7 +100,7 @@ namespace Foundation.Server
             if (!IsAuthenticated)
                 return UnityTask.FailedTask<GameScore>("Not authenticated");
 
-            return HttpPost<GameScore>("Self");
+            return HttpPostAsync<GameScore>("Self");
         }
 
         /// <summary>
@@ -66,7 +114,7 @@ namespace Foundation.Server
             if (!IsAuthenticated)
                 return UnityTask.FailedTask<GameScore>("Not authenticated");
 
-            return HttpPost("Update", entity);
+            return HttpPostAsync("Update", entity);
         }
 
         #endregion

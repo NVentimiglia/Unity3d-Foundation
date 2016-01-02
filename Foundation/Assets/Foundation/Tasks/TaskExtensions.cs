@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using UnityEngine;
 
 namespace Foundation.Tasks
 {
@@ -44,6 +46,36 @@ namespace Foundation.Tasks
                 self.AddContinue(continuation);
             }
             return self;
+        }
+
+        /// <summary>
+        /// Adds a timeout to the task. Will raise an exception if still running
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="seconds"></param>
+        /// <param name="onTimeout"></param>
+        /// <returns></returns>
+        public static T AddTimeout<T>(this T self, int seconds, Action<UnityTask> onTimeout = null) where T : UnityTask
+        {
+            TaskManager.StartRoutine(TimeOutAsync(self, seconds, onTimeout));
+
+            return self;
+        }
+
+        static IEnumerator TimeOutAsync(UnityTask task, int seconds, Action<UnityTask> onTimeout = null)
+        {
+            yield return new WaitForSeconds(seconds);
+
+            if (task.IsRunning)
+            {
+                if (onTimeout != null)
+                {
+                    onTimeout(task);
+                }
+                
+                task.Complete(new Exception("Timeout"));
+            }
         }
     }
 }

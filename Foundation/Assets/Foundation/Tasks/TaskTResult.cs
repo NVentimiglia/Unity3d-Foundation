@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using FullSerializer;
 using UnityEngine;
 
 
@@ -123,6 +124,11 @@ namespace Foundation.Tasks
         #endregion
 
         #region protected methods
+
+        public override void DeserializeResult(string json)
+        {
+            Result = JsonSerializer.Deserialize<TResult>(json);
+        }
 
         /// <summary>
         /// Runs complete logic, for custom tasks

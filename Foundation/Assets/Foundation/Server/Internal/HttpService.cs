@@ -18,7 +18,7 @@ using UnityEngine;
 namespace Foundation.Server
 {
     /// <summary>
-    /// A http client which returns HttpTasks's
+    /// A http client which returns UnityTasks's
     /// </summary>
     public class HttpService
     {
@@ -34,9 +34,9 @@ namespace Foundation.Server
         public string Accept = "application/json";
 
         /// <summary>
-        /// timeout
+        /// timeout in seconds
         /// </summary>
-        public float Timeout = 11f;
+        public int Timeout = 11;
         #endregion
 
         #region session
@@ -95,16 +95,87 @@ namespace Foundation.Server
 
         #region public interface
 
+        //Callbacks
+
+        /// <summary>
+        /// Begins the Http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void GetAsync(string url, Action<Response> callback)
+        {
+            TaskManager.StartRoutine(GetAsync(callback.FromJsonResponse(), url));
+        }
+
+        /// <summary>
+        /// Begins the Http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void GetAsync<T>(string url, Action<Response<T>> callback)
+        {
+            TaskManager.StartRoutine(GetAsync(callback.FromJsonResponse(), url));
+        }
+
+        /// <summary>
+        /// Begins the Http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void PostAsync(string url, Action<Response> callback)
+        {
+            TaskManager.StartRoutine(PostAsync(callback.FromJsonResponse(), url, null));
+        }
+
+        /// <summary>
+        /// Begins the Http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public void PostAsync(string url, string content, Action<Response> callback)
+        {
+            TaskManager.StartRoutine(PostAsync(callback.FromJsonResponse(), url, content));
+        }
+
+        /// <summary>
+        /// Begins the Http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void PostAsync<T>(string url, Action<Response<T>> callback)
+        {
+            TaskManager.StartRoutine(PostAsync(callback.FromJsonResponse(), url, null));
+        }
+
+        /// <summary>
+        /// Begins the Http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="content"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void PostAsync<T>(string url, string content, Action<Response<T>> callback)
+        {
+            TaskManager.StartRoutine(PostAsync(callback.FromJsonResponse(), url, content));
+        }
+
+        // Async
+
         /// <summary>
         /// Begins the Http request
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public HttpTask GetAsync(string url)
+        public UnityTask GetAsync(string url)
         {
-            var state = new HttpTask();
+            var state = new UnityTask();
 
-            TaskManager.StartRoutine(GetAsync(state, url));
+            TaskManager.StartRoutine(GetAsync(state.FromJsonResponse(), url));
 
             return state;
         }
@@ -114,11 +185,11 @@ namespace Foundation.Server
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public HttpTask<T> GetAsync<T>(string url)
+        public UnityTask<T> GetAsync<T>(string url)
         {
-            var state = new HttpTask<T>();
+            var state = new UnityTask<T>();
 
-            TaskManager.StartRoutine(GetAsync(state, url));
+            TaskManager.StartRoutine(GetAsync(state.FromJsonResponse(), url));
 
             return state;
         }
@@ -128,11 +199,11 @@ namespace Foundation.Server
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public HttpTask PostAsync(string url)
+        public UnityTask PostAsync(string url)
         {
-            var state = new HttpTask();
+            var state = new UnityTask();
 
-            TaskManager.StartRoutine(PostAsync(state, url, null));
+            TaskManager.StartRoutine(PostAsync(state.FromJsonResponse(), url, null));
 
             return state;
         }
@@ -143,11 +214,11 @@ namespace Foundation.Server
         /// <param name="url"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public HttpTask PostAsync(string url, string content)
+        public UnityTask PostAsync(string url, string content)
         {
-            var state = new HttpTask();
+            var state = new UnityTask();
 
-            TaskManager.StartRoutine(PostAsync(state, url, content));
+            TaskManager.StartRoutine(PostAsync(state.FromJsonResponse(), url, content));
 
             return state;
         }
@@ -157,11 +228,11 @@ namespace Foundation.Server
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public HttpTask<T> PostAsync<T>(string url)
+        public UnityTask<T> PostAsync<T>(string url)
         {
-            var state = new HttpTask<T>();
+            var state = new UnityTask<T>();
 
-            TaskManager.StartRoutine(PostAsync(state, url, null));
+            TaskManager.StartRoutine(PostAsync(state.FromJsonResponse(), url, null));
 
             return state;
         }
@@ -172,11 +243,11 @@ namespace Foundation.Server
         /// <param name="url"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public HttpTask<T> PostAsync<T>(string url, string content)
+        public UnityTask<T> PostAsync<T>(string url, string content)
         {
-            var state = new HttpTask<T>();
+            var state = new UnityTask<T>();
 
-            TaskManager.StartRoutine(PostAsync(state, url, content));
+            TaskManager.StartRoutine(PostAsync(state.FromJsonResponse(), url, content));
 
             return state;
         }
@@ -184,10 +255,11 @@ namespace Foundation.Server
 
         #region internal
         
-        // List of disposed WWW. Shorten around 60 second Android Timeout
-        List<WWW> _disposed = new List<WWW>();
+        Dictionary<WWW, Action<Response<string>>> _pendingCalls = new Dictionary<WWW, Action<Response<string>>>();
 
-        IEnumerator GetAsync(IHttpTask task, string url)
+        // Callbacks
+        
+        IEnumerator GetAsync(Action<Response<string>> task, string url)
         {
 
             WWW www;
@@ -198,14 +270,17 @@ namespace Foundation.Server
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                task.Complete(ex);
+                task(new Response<string>
+                {
+                    Exception = ex
+                });
                 yield break;
             }
-            
+
             yield return TaskManager.StartRoutine(HandleWWWAsync(task, www));
         }
 
-        IEnumerator PostAsync(IHttpTask task, string url, string content)
+        IEnumerator PostAsync(Action<Response<string>> task, string url, string content)
         {
             var headers = new Dictionary<string, string>
             {
@@ -215,7 +290,7 @@ namespace Foundation.Server
                 {APIConstants.SESSION, SessionToken},
                 {APIConstants.APPLICATIONID, ServerConfig.Instance.Key}
             };
-            
+
             WWW www;
             try
             {
@@ -224,7 +299,10 @@ namespace Foundation.Server
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                task.Complete(ex);
+                task(new Response<string>
+                {
+                    Exception = ex
+                });
                 yield break;
             }
 
@@ -232,42 +310,74 @@ namespace Foundation.Server
             yield return TaskManager.StartRoutine(HandleWWWAsync(task, www));
         }
 
-        IEnumerator HandleWWWAsync(IHttpTask task, WWW www)
+        IEnumerator TimeoutResponse(Action<Response<string>> task, WWW www)
+        {
+            yield return new WaitForSeconds(Timeout);
+
+            if (_pendingCalls.ContainsKey(www))
+            {
+                _pendingCalls.Remove(www);
+
+                task(new Response<string>
+                {
+                    Exception = new Exception("Request timed out"),
+                    Metadata = new HttpMetadata {Message = "Request timed out", StatusCode = HttpStatusCode.RequestTimeout}
+                });
+            }
+        }
+
+        IEnumerator HandleWWWAsync(Action<Response<string>> task, WWW www)
         {
             if (!www.isDone)
             {
-                TaskManager.StartRoutine(StartTimeout(www, Timeout));
+                _pendingCalls.Add(www, task);
+
+                TaskManager.StartRoutine(TimeoutResponse(task, www));
+
                 yield return www;
             }
 
-            if (_disposed.Contains(www))
+            //Timeout
+            if (!_pendingCalls.ContainsKey(www))
             {
-                task.StatusCode = HttpStatusCode.RequestTimeout;
-                task.Complete(new Exception("Request timed out"));
-                task.IsWebException = true;
-                _disposed.Remove(www);
                 yield break;
             }
 
-            task.StatusCode = GetCode(www);
+            _pendingCalls.Remove(www);
+
+            HttpMetadata meta;
 
             if (www.responseHeaders.ContainsKey("MESSAGE"))
             {
                 var error = www.responseHeaders["MESSAGE"];
-                task.Metadata = JsonSerializer.Deserialize<HttpMetadata>(error);
+                meta = JsonSerializer.Deserialize<HttpMetadata>(error);
+                meta.StatusCode = GetCode(www);
+            }
+            else
+            {
+                meta = new HttpMetadata {StatusCode = GetCode(www) };
             }
 
             if (!string.IsNullOrEmpty(www.error))
             {
-                if (task.Metadata != null)
+                if (!string.IsNullOrEmpty(meta.Message))
                 {
-                    task.Complete(new HttpException(task.Metadata.Message, task.StatusCode, task.Metadata.ModelState));
+                    task(new Response<string>
+                    {
+                        Metadata = meta,
+                        Exception = new HttpException(meta.Message, meta.StatusCode, meta.ModelState)
+                    });
                 }
                 else
                 {
-                    task.Complete(new Exception(RemoveReturn(www.error)));
+                    task(new Response<string>
+                    {
+                        Metadata = meta,
+                        Exception = new Exception(RemoveReturn(www.error))
+                    });
                 }
             }
+            
             else
             {
                 if (www.responseHeaders.ContainsKey(APIConstants.AUTHORIZATION))
@@ -282,23 +392,15 @@ namespace Foundation.Server
 
                 SaveSession();
 
-                task.Content = www.text;
-                task.DeserializeResult();
-                task.Complete();
+
+                task(new Response<string>
+                {
+                   Metadata = meta,
+                   Result = www.text,
+                });
             }
         }
-
-        IEnumerator StartTimeout(WWW www, float time)
-        {
-            yield return new WaitForSeconds(time);
-
-            if (!www.isDone)
-            {
-                www.Dispose();
-                _disposed.Add(www);
-            }
-        }
-
+        
         HttpStatusCode GetCode(WWW www)
         {
             if (!www.responseHeaders.ContainsKey("STATUS"))

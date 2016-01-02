@@ -6,13 +6,11 @@
 //  -------------------------------------
 
 using System;
-using System.Collections;
 using System.Net;
 using Facebook.Unity;
 using Foundation.Server.Api;
 using Foundation.Tasks;
 using FullSerializer;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Foundation.Server
@@ -121,35 +119,6 @@ namespace Foundation.Server
         #region public methods
 
         /// <summary>
-        /// Hit server, get up to date account profile
-        /// </summary>
-        /// <returns>true if authenticated</returns>
-        public UnityTask Get()
-        {
-            if (IsAuthenticated)
-            {
-                //Refresh
-                return HttpPost<AccountDetails>("Get")
-                .ContinueWith(o =>
-                {
-                    //reload details
-                    if (o.IsSuccess && o.Result != null)
-                    {
-                        ReadDetails(o.Result);
-                    }
-                    else if (o.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        //
-                        SignOut();
-                    }
-                });
-            }
-
-            return Guest();
-
-        }
-
-        /// <summary>
         /// Sign out and clear cache
         /// </summary>
         public void SignOut()
@@ -165,21 +134,52 @@ namespace Foundation.Server
             Save();
         }
 
+
+        /// <summary>
+        /// Hit server, get up to date account profile
+        /// </summary>
+        /// <returns>true if authenticated</returns>
+        public void Get(Action<Response> callback)
+        {
+            if (IsAuthenticated)
+            {
+                //Refresh
+                HttpPostAsync<AccountDetails>("Get", o =>
+                {
+                    if (o.IsSuccess && o.Result != null)
+                    {
+                        ReadDetails(o.Result);
+                    }
+                    else if (o.Metadata != null && o.Metadata.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        SignOut();
+                    }
+                });
+            }
+            else
+            {
+                callback(new Response(new Exception("Not authorized")));
+            }
+        }
+
+
         /// <summary>
         /// Requests a new guest account. Use for 'Skip Sign In' option.
         /// </summary>
         /// <returns></returns>
-        public UnityTask Guest()
+        public void Guest(Action<Response> callback)
         {
             // Is Authenticated
             if (IsAuthenticated)
             {
                 if (Application.internetReachability == NetworkReachability.NotReachable)
-                    return UnityTask.SuccessTask();
+                {
+                    callback(new Response());
+                    return;
+                }
 
                 //Refresh
-                return HttpPost<AccountDetails>("Get")
-                    .ContinueWith(o =>
+                HttpPostAsync<AccountDetails>("Get", o =>
                     {
                         //reload details
                         if (o.IsSuccess && o.Result != null)
@@ -187,6 +187,8 @@ namespace Foundation.Server
                             ReadDetails(o.Result);
                         }
                     });
+
+                return;
             }
 
             if (Account == null || string.IsNullOrEmpty(Account.Id))
@@ -197,32 +199,175 @@ namespace Foundation.Server
             //No Internet ? 
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                Debug.LogWarning("Not signed in, no internet.");
-                return UnityTask.SuccessTask();
+                callback(new Response(new Exception("Not signed in, no internet.")));
+                return;
             }
 
             //Save serverside in background
-            var task = HttpPost<AccountDetails>("Guest", new AccountGuestSignIn
+            HttpPostAsync<AccountDetails>("Guest", new AccountGuestSignIn
             {
                 UserId = Account.Id,
-            })
-            .ContinueWith(o =>
+            }, o =>
+             {
+                 if (o.IsSuccess && o.Result != null)
+                 {
+                     ReadDetails(o.Result);
+                 }
+                 else
+                 {
+                     Debug.LogException(o.Exception);
+
+                    //sign out
+                    HttpService.ClearSession();
+                     HttpService.SaveSession();
+                 }
+
+                 callback(new Response());
+             });
+        }
+
+        /// <summary>
+        /// Sign in request
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void SignIn(string email, string password, Action<Response> callback)
+        {
+            HttpPostAsync<AccountDetails>("SignIn", new AccountEmailSignIn
+            {
+                Email = email,
+                Password = password,
+                UserId = Account.Id,
+            }, o =>
+             {
+                 if (o.IsSuccess && o.Result != null)
+                 {
+                     ReadDetails(o.Result);
+                     callback(new Response());
+                 }
+                 else
+                 {
+                     callback(new Response(o.Exception));
+                 }
+             });
+        }
+
+        /// <summary>
+        /// Update account details
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void Update(string email, string password, Action<Response> callback)
+        {
+            if (!IsAuthenticated)
+            {
+                // Happens if start as guest offline
+                // must sign in.
+                SignIn(email, password, callback);
+                return;
+            }
+
+            HttpPostAsync<AccountDetails>("Update", new AccountEmailUpdate
+            {
+                NewEmail = email,
+                NewPassword = password,
+            }, o =>
+             {
+                 if (o.IsSuccess && o.Result != null)
+                 {
+                     ReadDetails(o.Result);
+                     callback(new Response());
+                 }
+                 else
+                 {
+                     callback(new Response(o.Exception));
+                 }
+             });
+        }
+
+        /// <summary>
+        /// Tells the server to send out an recovery email. This email will contain a reset token.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void Reset(string email, Action<Response> callback)
+        {
+            HttpPostAsync<AccountDetails>("Reset", new AccountEmailReset
+            {
+                Email = email
+            },o =>
             {
                 if (o.IsSuccess && o.Result != null)
                 {
                     ReadDetails(o.Result);
+                    callback(new Response());
                 }
                 else
                 {
-                    Debug.LogException(o.Exception);
-
-                    //sign out
-                    HttpService.ClearSession();
-                    HttpService.SaveSession();
-                    //overwrite error, let user play unauthenticated
-                   o.Status = TaskStatus.Success;
+                    callback(new Response(o.Exception));
                 }
             });
+        }
+
+        /// <summary>
+        /// Deletes the current account
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public void Delete(string password, Action<Response> callback)
+        {
+            if (!IsAuthenticated)
+            {
+                callback(new Response(new Exception("Not authenticated")));
+                return;
+            }
+
+            HttpPostAsync<AccountDetails>("Delete", new AccountEmailDelete
+            {
+                Password = password,
+            },o =>
+            {
+                if (o.IsSuccess)
+                {
+                    SignOut();
+                    callback(new Response());
+                }
+                else
+                {
+                    callback(new Response(o.Exception));
+                }
+            });
+        }
+
+        //
+
+        /// <summary>
+        /// Hit server, get up to date account profile
+        /// </summary>
+        /// <returns>true if authenticated</returns>
+        public UnityTask Get()
+        {
+            var task = new UnityTask(TaskStrategy.Custom);
+            Get(task.FromResponse());
+            return task;
+        }
+
+
+        /// <summary>
+        /// Requests a new guest account. Use for 'Skip Sign In' option.
+        /// </summary>
+        /// <returns></returns>
+        public UnityTask Guest()
+        {
+
+            var task = new UnityTask(TaskStrategy.Custom);
+            Guest(task.FromResponse());
             return task;
         }
 
@@ -234,18 +379,8 @@ namespace Foundation.Server
         /// <returns></returns>
         public UnityTask SignIn(string email, string password)
         {
-            var task = HttpPost<AccountDetails>("SignIn", new AccountEmailSignIn
-            {
-                Email = email,
-                Password = password,
-                UserId = Account.Id,
-            }).ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
-                {
-                    ReadDetails(o.Result);
-                }
-            });
+            var task = new UnityTask(TaskStrategy.Custom);
+            SignIn(email, password, task.FromResponse());
             return task;
         }
 
@@ -257,24 +392,8 @@ namespace Foundation.Server
         /// <returns></returns>
         public UnityTask Update(string email, string password)
         {
-            if (!IsAuthenticated)
-            {
-                // Happens if start as guest offline
-                // must sign in.
-                return SignIn(email, password);
-            }
-
-            var task = HttpPost<AccountDetails>("Update", new AccountEmailUpdate
-            {
-                NewEmail = email,
-                NewPassword = password,
-            }).ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
-                {
-                    ReadDetails(o.Result);
-                }
-            });
+            var task = new UnityTask(TaskStrategy.Custom);
+            Update(email, password, task.FromResponse());
             return task;
         }
 
@@ -285,16 +404,8 @@ namespace Foundation.Server
         /// <returns></returns>
         public UnityTask Reset(string email)
         {
-            var task = HttpPost<AccountDetails>("Reset", new AccountEmailReset
-            {
-                Email = email
-            }).ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
-                {
-                    ReadDetails(o.Result);
-                }
-            });
+            var task = new UnityTask(TaskStrategy.Custom);
+            Reset(email, task.FromResponse());
             return task;
         }
 
@@ -305,94 +416,113 @@ namespace Foundation.Server
         /// <returns></returns>
         public UnityTask Delete(string password)
         {
-            if (!IsAuthenticated)
-                return UnityTask.FailedTask("Not authenticated");
-
-            var task = HttpPost<AccountDetails>("Delete", new AccountEmailDelete
-            {
-                Password = password,
-            }).ContinueWith(o =>
-            {
-                if (o.IsSuccess)
-                {
-                    SignOut();
-                }
-            });
+            var task = new UnityTask(TaskStrategy.Custom);
+            Delete(password, task.FromResponse());
             return task;
         }
         #endregion
 
         #region facebook
 
-        public UnityTask FacebookConnect()
+        /// <summary>
+        /// Sign in request
+        /// </summary>
+        /// <returns></returns>
+        public void FacebookConnect(Action<Response> callback)
         {
-            var task = new UnityTask { Strategy = TaskStrategy.Custom };
             FB.LogInWithPublishPermissions(new[] { "public_profile", "user_friends", "user_birthday", "user_email" }, result =>
-             {
-                 if (!string.IsNullOrEmpty(result.Error))
-                 {
-                     task.Complete(new Exception(result.Error));
-                 }
-                 else
-                 {
-                     FacebookConnect(result.AccessToken).ContinueWith(inner =>
-                     {
-                         if (inner.IsFaulted)
-                         {
-                             task.Complete(inner.Exception);
-                         }
-                         else
-                         {
-                             task.Complete();
-                         }
-                     });
-                 }
-             });
-            return task;
+            {
+                if (!string.IsNullOrEmpty(result.Error))
+                {
+                    callback(new Response(new Exception(result.Error)));
+                }
+                else
+                {
+                    FacebookConnect(result.AccessToken, callback);
+                }
+            });
         }
-
 
         /// <summary>
         /// Sign in request
         /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="accessToken"></param>
         /// <returns></returns>
-        public UnityTask FacebookConnect(AccessToken token)
+        public void FacebookConnect(AccessToken token, Action<Response> callback)
         {
-            var task = HttpPost<AccountDetails>("FacebookConnect", new AccountFacebookConnect
+            HttpPostAsync<AccountDetails>("FacebookConnect", new AccountFacebookConnect
             {
                 AccessToken = token.TokenString,
-            }).ContinueWith(o =>
-           {
-               if (o.IsSuccess && o.Result != null)
-               {
-                   FBToken = token;
-                   ReadDetails(o.Result);
-               }
-           });
-            return task;
+            },
+            response =>
+            {
+                if (response.IsSuccess && response.Result != null)
+                {
+                    FBToken = token;
+                    ReadDetails(response.Result);
+                }
+            });
         }
-
 
         /// <summary>
         /// Removal
         /// </summary>
-        /// <param name="provider"></param>
+        /// <returns></returns>
+        public void FacebookDisconnect(Action<Response> callback)
+        {
+            if (!IsAuthenticated)
+            {
+                callback(new Response(new Exception(("Not authenticated"))));
+                return;
+            }
+
+            HttpPostAsync<AccountDetails>("FacebookDisconnect", new AccountFacebookDisconnect(),
+            response =>
+            {
+                if (response.IsSuccess && response.Result != null)
+                {
+                    ReadDetails(response.Result);
+                    FBToken = null;
+                }
+            });
+        }
+
+        /// <summary>
+        /// Sign in request
+        /// </summary>
+        /// <returns></returns>
+        public UnityTask FacebookConnect()
+        {
+            var task = new UnityTask { Strategy = TaskStrategy.Custom };
+
+            FacebookConnect(task.FromResponse());
+
+            return task;
+        }
+
+        /// <summary>
+        /// Sign in request
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public UnityTask FacebookConnect(AccessToken token)
+        {
+            var task = new UnityTask { Strategy = TaskStrategy.Custom };
+
+            FacebookConnect(token, task.FromResponse());
+
+            return task;
+        }
+
+        /// <summary>
+        /// Removal
+        /// </summary>
         /// <returns></returns>
         public UnityTask FacebookDisconnect()
         {
-            if (!IsAuthenticated)
-                return UnityTask.FailedTask("Not authenticated");
+            var task = new UnityTask { Strategy = TaskStrategy.Custom };
 
-            var task = HttpPost<AccountDetails>("FacebookDisconnect", new AccountFacebookDisconnect())
-            .ContinueWith(o =>
-            {
-                if (o.IsSuccess && o.Result != null)
-                {
-                    ReadDetails(o.Result);
-                }
-            });
+            FacebookDisconnect(task.FromResponse());
+
             return task;
         }
 

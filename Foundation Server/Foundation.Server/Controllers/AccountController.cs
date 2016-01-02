@@ -36,10 +36,6 @@ namespace Foundation.Server.Controllers
         [Route("api/Account/Get")]
         public async Task<IHttpActionResult> Get()
         {
-            // Registered User
-            if (await AppDatabase.Users.AnyAsync(o => o.Id == UserId))
-                return BadRequest("UserId is in use. Try password reset.");
-
             var user = await AppDatabase.Users.FirstOrDefaultAsync(o => o.Id == UserId);
 
             if (user == null)

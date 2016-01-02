@@ -262,6 +262,8 @@
     <Compile Include="Assets\Foundation\Server\RealtimeService.cs" />
     <Compile Include="Assets\Foundation\Server\StorageMetadata.cs" />
     <Compile Include="Assets\Foundation\Server\StorageService.cs" />
+    <Compile Include="Assets\Foundation\Tasks\HttpMetadata.cs" />
+    <Compile Include="Assets\Foundation\Tasks\Response.cs" />
     <Compile Include="Assets\Foundation\Tasks\Task.cs" />
     <Compile Include="Assets\Foundation\Tasks\TaskExtensions.cs" />
     <Compile Include="Assets\Foundation\Tasks\TaskFactory.cs" />

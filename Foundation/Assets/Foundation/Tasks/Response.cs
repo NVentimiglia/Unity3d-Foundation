@@ -61,6 +61,11 @@ namespace Foundation.Tasks
 
         }
 
+        public Response(T result)
+        {
+            Result = result;
+        }
+
         public Response(Exception ex)
         {
             Exception = ex;

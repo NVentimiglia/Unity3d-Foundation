@@ -1,0 +1,7 @@
+1) Setup Web.Config to DB, SMTP, and Settings
+
+2) Setup DB using SQL script
+
+3) Turn on Null intializer
+
+4) Upload

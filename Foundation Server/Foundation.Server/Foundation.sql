@@ -1,3 +1,12 @@
+DROP TABLE  [dbo].[__MigrationHistory]
+DROP TABLE  [dbo].[GameScores]
+DROP TABLE  [dbo].[StorageObjects]
+DROP TABLE  [dbo].[UserFacebookClaims]
+DROP TABLE  [dbo].[UserAccounts]
+
+GO
+
+
 
 /* EF Stuff */
 

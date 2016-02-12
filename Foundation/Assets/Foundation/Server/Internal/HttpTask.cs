@@ -6,30 +6,12 @@
 //  -------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Net;
 using Foundation.Tasks;
 using FullSerializer;
 
 namespace Foundation.Server
 {
-    /// <summary>
-    /// Error Response
-    /// </summary>
-    public class HttpMetadata
-    {
-        /// <summary>
-        /// General error title
-        /// </summary>
-        public string Message { get; set; }
-        
-        /// <summary>
-        /// Validation Errors. apiEntity.PropertyName by errors[]
-        /// </summary>
-        public Dictionary<string, string[]> ModelState { get; set; }
-    }
-
-
     public interface IHttpTask
     {
         /// <summary>
@@ -94,12 +76,7 @@ namespace Foundation.Server
         /// HTTP Status Code
         /// </summary>
         public HttpStatusCode StatusCode { get; set; }
-
-        /// <summary>
-        /// Specific error details
-        /// </summary>
-        public HttpMetadata Metadata { get; set; }
-
+        
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -153,12 +130,7 @@ namespace Foundation.Server
         /// HTTP Status Code
         /// </summary>
         public HttpStatusCode StatusCode { get; set; }
-
-        /// <summary>
-        /// Specific error details
-        /// </summary>
-        public HttpMetadata Metadata { get; set; }
-
+        
         /// <summary>
         /// Constructor.
         /// </summary>

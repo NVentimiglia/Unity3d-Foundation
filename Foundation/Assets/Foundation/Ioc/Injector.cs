@@ -541,8 +541,8 @@ namespace Foundation
             var fields = instance.GetType().GetRuntimeFields().Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
             var props = instance.GetType().GetRuntimeProperties().Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
 #else
-            var fields = instance.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
-            var props = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
+            var fields = instance.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
+            var props = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
 #endif
             for (int i = 0;i < fields.Length;i++)
             {

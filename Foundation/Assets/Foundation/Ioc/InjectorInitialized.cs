@@ -5,6 +5,7 @@
 //  Published		: 2015
 //  -------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -194,7 +195,23 @@ namespace Foundation
         /// </summary>
         public static Type[] GetServiceTypes()
         {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(o => o.HasAttribute<InjectorInitialized>())).ToArray();
+            var t = new List<Type>();
+
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    foreach (Type type in assembly.GetTypes())
+                        if (type.HasAttribute<InjectorInitialized>())
+                            t.Add(type);
+                }
+                catch
+                {
+                    Debug.LogError("Can't access assembly " + assembly.GetName());
+                }
+            }
+
+            return t.ToArray();
         }
 
         /// <summary>

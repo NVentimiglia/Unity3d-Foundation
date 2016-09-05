@@ -2,6 +2,8 @@
 
 This is a starter framework with common application services for building quality data driven games.
 
+[**Need something lighter ?** Try out Foundation Light !](https://github.com/NVentimiglia/Foundation-Light)
+
 ### Key Features
 
 - [Full c# webserver. Modern WebApi hostable on Azure.](http://www.asp.net/web-api)

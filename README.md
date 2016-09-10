@@ -1,3 +1,10 @@
+# Deprication Warning
+
+I have started on a new version of this framework which is much lighter weight and easier to use. This code is about four years old, and while it works fine follows old development paradigms.
+
+Please try out [**Foundation Light !**](https://github.com/NVentimiglia/Foundation-Light)
+
+
 # Unity3d-Foundation
 
 This is a starter framework with common application services for building quality data driven games.

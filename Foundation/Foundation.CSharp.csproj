@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -240,6 +242,7 @@
     <Compile Include="Assets\Foundation\Ioc\ImportAttribute.cs" />
     <Compile Include="Assets\Foundation\Ioc\Injector.cs" />
     <Compile Include="Assets\Foundation\Ioc\InjectorInitialized.cs" />
+    <Compile Include="Assets\Foundation\Ioc\LateImportAttribute.cs" />
     <Compile Include="Assets\Foundation\Localization\LanguageInfo.cs" />
     <Compile Include="Assets\Foundation\Localization\LocalizationService.cs" />
     <Compile Include="Assets\Foundation\Localization\LocalizedAttribute.cs" />

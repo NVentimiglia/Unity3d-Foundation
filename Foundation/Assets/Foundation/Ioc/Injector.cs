@@ -135,6 +135,8 @@ namespace Foundation
         /// </summary>
         static readonly List<InjectExport> Exports = new List<InjectExport>();
 
+        static readonly List<InjectSubscription> LateImports = new List<InjectSubscription>();
+
         /// <summary>
         /// determines if the subscription should be invoked
         /// </summary>
@@ -190,6 +192,27 @@ namespace Foundation
                     || (o.MemberType.IsAssignableFrom(export.MemberType))
                         // support for GetAll
                         // ReSharper disable once PossibleNullReferenceException
+                    || (o.MemberType.IsArray && o.MemberType.GetElementType().IsAssignableFrom(export.MemberType))
+                    || (o.MemberType.IsGenericType && o.MemberType.GetGenericArguments().First().IsAssignableFrom(export.MemberType)));
+#endif
+        }
+
+        static IEnumerable<InjectSubscription> GetLateImportsFor(InjectExport export)
+        {
+            if (export.HasKey)
+                return LateImports.Where(o => o.HasKey && o.InjectKey == export.InjectKey);
+
+#if UNITY_WSA && !UNITY_EDITOR
+            return
+                LateImports.Where(o =>
+                    o.MemberType == export.MemberType
+                    || (o.MemberType.GetTypeInfo().IsAssignableFrom(export.MemberType.GetTypeInfo()))
+                    || (o.MemberType.IsArray && o.MemberType.GetElementType().GetTypeInfo().IsAssignableFrom(export.MemberType.GetTypeInfo()))
+                    || (o.MemberType.GetTypeInfo().IsGenericType && o.MemberType.GetTypeInfo().GenericTypeArguments.First().GetTypeInfo().IsAssignableFrom(export.MemberType.GetTypeInfo())));
+#else
+            return LateImports
+                .Where(o => o.MemberType == export.MemberType
+                    || o.MemberType.IsAssignableFrom(export.MemberType)
                     || (o.MemberType.IsArray && o.MemberType.GetElementType().IsAssignableFrom(export.MemberType))
                     || (o.MemberType.IsGenericType && o.MemberType.GetGenericArguments().First().IsAssignableFrom(export.MemberType)));
 #endif
@@ -252,6 +275,19 @@ namespace Foundation
             {
                 Import(sub.Instance, sub.Member, sub.InjectKey);
             }
+
+
+            // can't modify the list while inside foreach, will throw a exception
+            var toRemove = new List<InjectSubscription>();
+
+            // Check for late imports and resolve it
+            foreach (InjectSubscription late in GetLateImportsFor(e))
+            {
+                Import(late.Instance, late.Member, late.InjectKey);
+                toRemove.Add(late);
+            }
+
+            LateImports.RemoveAll(subscription => toRemove.Contains(subscription));
         }
 
         /// <summary>
@@ -297,14 +333,16 @@ namespace Foundation
             var fields = instance.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
             var props = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(o => o.HasAttribute<ImportAttribute>()).ToArray();
 #endif
-            for (int i = 0;i < fields.Length;i++)
+            for (int i = 0; i < fields.Length; i++)
             {
                 Import(instance, fields[i], fields[i].GetAttribute<ImportAttribute>().InjectKey);
             }
-            for (int i = 0;i < props.Length;i++)
+            for (int i = 0; i < props.Length; i++)
             {
                 Import(instance, props[i], props[i].GetAttribute<ImportAttribute>().InjectKey);
             }
+
+            CheckForLateImports(instance);
         }
 
         /// <summary>
@@ -368,6 +406,37 @@ namespace Foundation
 
                 if (arg != null)
                     member.SetMemberValue(instance, arg.Instance);
+            }
+        }
+
+        static void CheckForLateImports(object instance)
+        {
+#if UNITY_WSA && !UNITY_EDITOR
+            var fields = instance.GetType().GetTypeInfo().DeclaredFields.Where(o => o.HasAttribute<LateImportAttribute>()).ToArray();
+            var props = instance.GetType().GetTypeInfo().DeclaredProperties.Where(o => o.HasAttribute<LateImportAttribute>()).ToArray();
+#else
+            var fields = instance.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(o => o.HasAttribute<LateImportAttribute>()).ToArray();
+            var props = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(o => o.HasAttribute<LateImportAttribute>()).ToArray();
+#endif
+
+            for (int i = 0; i < fields.Length; i++)
+            {
+                var lateInject = fields[i].GetAttribute<LateImportAttribute>();
+
+                if (HasExport(fields[i].FieldType))
+                    Import(instance, fields[i], lateInject.InjectKey);
+                else
+                    LateImports.Add(new InjectSubscription(fields[i].GetMemberType(), instance, fields[i], lateInject.InjectKey == null ? null : lateInject.InjectKey));
+            }
+
+            for (int i = 0; i < props.Length; i++)
+            {
+                var lateInject = props[i].GetAttribute<LateImportAttribute>();
+
+                if (HasExport(props[i].PropertyType))
+                    Import(instance, props[i], lateInject.InjectKey);
+                else
+                    LateImports.Add(new InjectSubscription(props[i].GetMemberType(), instance, props[i], lateInject.InjectKey == null ? null : lateInject.InjectKey));
             }
         }
 

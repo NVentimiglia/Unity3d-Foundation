@@ -33,8 +33,5 @@ Desktop, Webplayer, WebGL, Android, iOS, Windows Store
 **[Documentation](https://github.com/NVentimiglia/Unity3d-Foundation/wiki)**
 
 
-## License
-[MIT License](https://github.com/NVentimiglia/Unity3d-Foundation/blob/master/README.md)
-
 ## Donations
 [I accept donations via papal. Your money is an objective measure of my self esteem.](https://www.paypal.com/us/cgi-bin/webscr?cmd=_send-money&nav=1&email=nick@simplesys.us)
